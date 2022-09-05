@@ -1,5 +1,7 @@
 # とにかくbooktabsを使おう
 
+[![Deploy to Pages](https://github.com/matsui528/use_booktabs_anyway/actions/workflows/pages.yml/badge.svg)](https://github.com/matsui528/use_booktabs_anyway/actions/workflows/pages.yml)
+
 本資料は、TeXにおいてbooktabsパッケージを用いて綺麗な表を作るための指南書です。
 
 ## 資料本体
