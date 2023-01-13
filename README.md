@@ -1,6 +1,5 @@
 # とにかくbooktabsを使おう
 
-[![Deploy to Pages](https://github.com/matsui528/use_booktabs_anyway/actions/workflows/pages.yml/badge.svg)](https://github.com/matsui528/use_booktabs_anyway/actions/workflows/pages.yml)
 
 本資料は、TeXにおいてbooktabsパッケージを用いて綺麗な表を作るための指南書です。
 
@@ -19,7 +18,4 @@ $ cd use_booktabs_anyway
 $ make build   # You can find "main.pdf" on "web"
 ```
 
-## Actions上でのビルド方法
-- [GitHub Actions上でpdfを作成し、pagesにartifactをアップロードする](.github/workflows/pages.yml)。Actionsのトリガーは手動実行のみ許可している。
-- 結果のpdfは[https://matsui528.github.io/use_booktabs_anyway/main.pdf](https://matsui528.github.io/use_booktabs_anyway/main.pdf)からアクセスできる。
-- texlive-fullのインストールには時間がかかるので、texlive-lang-japaneseおよびtexlive-latex-extraをインストールする。
+
