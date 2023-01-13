@@ -1,0 +1,894 @@
+\RequirePackage{plautopatch}  % From https://qiita.com/wtsnjp/items/76557b1598445a1fc9da
+
+\documentclass[uplatex,onecolumn,9pt,dvipdfmx]{jsarticle}
+
+\usepackage[dvipdfmx]{hyperref,graphicx}
+
+% To fix garbled text in the table of contents
+\usepackage{pxjahyper}
+
+% Change the link style
+% https://tex.stackexchange.com/questions/823/remove-ugly-borders-around-clickable-cross-references-and-hyperlinks
+\hypersetup{
+  colorlinks = true, % Colours links instead of ugly boxes
+  urlcolor = blue, % Colour for external hyperlinks
+  linkcolor = blue, % Colour of internal links
+  citecolor = red % Colour of citations
+}
+
+\usepackage[left=1.5cm, right=1.5cm, top=2cm, bottom=3cm]{geometry}
+
+% Beautiful Japanese font %
+% Install noto fonts by $ sudo apt install fonts-noto
+% You need to use uplatex. 
+\usepackage[deluxe]{otf}
+\usepackage[noto-otc]{pxchfon}
+
+% For beautiful source-code
+% https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
+\usepackage{minted}
+
+% For text box (screen)
+\usepackage{ascmac}
+
+% For math stuff
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bm}
+
+% For a beautiful table
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% Alias
+\newcommand{\Tref}[1]{表\ref{#1}}
+\newcommand{\Eref}[1]{式\ref{#1}}
+\newcommand{\Fref}[1]{図\ref{#1}}
+\newcommand{\Aref}[1]{アルゴリズム\ref{#1}}
+\newcommand{\Sref}[1]{\ref{#1}章}
+
+\newcommand{\todo}[1]{\textbf{\textcolor{cyan}{[\textsc{TODO:} #1]}}}
+
+\begin{document}
+
+\title{とにかくbooktabsを使おう}
+\author{東京大学　情報理工学系研究科　講師　松井勇佑}
+\date{初版 2022年9月5日 / 最終更新 2022年12月22日}
+\maketitle
+
+\begin{screen}
+    \begin{itemize}
+    \item 本資料のGitHubリポジトリ： \url{https://github.com/matsui528/use_booktabs_anyway}
+    \item 著者のウェブページ：\url{http://yusukematsui.me}
+    \end{itemize}
+\end{screen}
+
+\section{はじめに}
+
+論文に表を記載する際、booktabsパッケージを使いましょう。
+booktabsは通常のTeXの表に対し適切な線の使用やスペースの配置を補助してくれるパッケージです。
+booktabsを使うだけで表がシュッと綺麗になります。
+それだけでなく、booktabs流の表の作り方（行を基本とする思考、縦線を入れない、など）
+を考えていくと、論理的にわかりやすい表になります。以下の２つが基本的な文献です。
+\begin{itemize}
+    \item \href{http://mirrors.ctan.org/macros/latex/contrib/booktabs/booktabs.pdf}{公式ドキュメント}。細かいオプションなどはCTANの公式ドキュメントを参照しましょう。
+    \item \href{https://people.inf.ethz.ch/markusp/teaching/guides/guide-tables.pdf}{Markus P\"{u}schel, ``Small Guide to Making Nice Tables''}. 本資料と同じ立ち位置の、booktabs紹介記事です。
+\end{itemize}
+本文章は上記文献と松井の経験則をベースにしています。間違いや、より良い方法もあると思います。提案やコメントやミスの指摘などがあればぜひissueでお願いします。
+
+
+\section{基本的な使い方}
+次の２つの表を考えましょう。
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{|c|c|c|} \hline
+            名前 & 身長 (cm) & 体重 (kg) \\ \hline
+            オデロ・ヘンリーク  & 173 & 62.2 \\ \hline 
+            オリファー・イノエ  & 178 & 69.5 \\ \hline   
+        \end{tabular}
+        \caption{通常の表}
+        \label{tbl:bad_example}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
+            オデロ・ヘンリーク  & 173 & 62.2 \\ 
+            オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+        \end{tabular}
+        \caption{booktabsを用いた表}
+        \label{tbl:good_example}
+    \end{minipage}
+\end{table}
+
+左は通常のTeXの機能でなんとなく作った表です。多分最初に作る表はこんな感じになると思います。
+右は同じ内容をbooktabsを使って整えた例です。シュッとしていてカッコいいですよね？
+ここで、左側の表のtexのソースは以下です。 
+\begin{minted}[mathescape, % 数式使える
+    linenos, % 行番号
+    fontfamily=courier, % いい感じのフォント
+    breaklines, % 長すぎる行をうまく改行
+    %breakindent=20pt, % 改行後の左からの幅
+    %fontsize=\small, % フォントサイズ
+    %numbersep=2pt, % 行番号の内側よせ余白
+    frame=single, % lines:上下に線 single:線で囲う
+    %baselinestretch=0.7, % 行間
+    ]{tex}
+% 「表1 通常の表」
+\begin{tabular}{|c|c|c|} \hline
+    名前 & 身長 (cm) & 体重 (kg) \\ \hline
+    オデロ・ヘンリーク  & 173 & 62.2 \\ \hline 
+    オリファー・イノエ  & 178 & 69.5 \\ \hline   
+\end{tabular}
+\end{minted}
+一方で、右側のbooktabsを用いたソースは次のようになっています。
+\begin{minted}[mathescape, % 数式使える
+    linenos, % 行番号
+    fontfamily=courier, % いい感じのフォント
+    breaklines, % 長すぎる行をうまく改行
+    %breakindent=20pt, % 改行後の左からの幅
+    %fontsize=\small, % フォントサイズ
+    %numbersep=2pt, % 行番号の内側よせ余白
+    frame=single, % lines:上下に線 single:線で囲う
+    %baselinestretch=0.7, % 行間
+    ]{tex}
+% 「表2 booktabsを用いた表」
+\begin{tabular}{@{}lll@{}} \toprule
+    名前 & 身長 (cm) & 体重 (kg) \\ \midrule
+    オデロ・ヘンリーク  & 173 & 62.2 \\ 
+    オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+\end{tabular}
+\end{minted}
+ここで左の表を右の表に変換する機械的なルールを紹介します。以下の手続きを行えばOKです。
+\begin{enumerate}
+    \item booktabsパッケージをインポートする: ソースコード中の最初のほうで\mintinline{tex}{\usepackage{booktabs}}として 
+    パッケージをインポートしましょう。これを忘れると当然うまくいきません。
+    \item 縦線を取り除く：\Tref{tbl:bad_example}では列指定オプションは \mintinline{tex}{{|c|c|c|}} となっています。ここから縦線を取り除きます。
+    すなわち、\mintinline{tex}{{ccc}} とします。基本的に表の縦線は必要ない場合が多いです。縦線がどうしても必要な場合は、表を分割するほうが良い場合が多いです。
+    \item 左揃えにする：すなわち、\mintinline{tex}{{ccc}} だったものを \mintinline{tex}{{lll}} とします。まずは全てを左揃えにすることをオススメします。そのうえで見栄えが悪ければ中央や右揃えを考えましょう。
+    \item 魔法のスペーサー記号をつける： \mintinline{tex}{@{}} という魔法のスペーサー記号を列指定オプションの両端につけます。
+    すなわち、\mintinline{tex}{{lll}} だったものを \mintinline{tex}{{@{}lll@{}}} とします。これを忘れる人が多いです。
+    このスペーサーをつけると、表の両端の余分な空白がなくなり、見栄えが良くなります。
+    スペーサーがない不揃いな例が\Tref{tbl:wo_space}で、スペーサーがある綺麗な例が\Tref{tbl:w_space}です。
+    \item 横線を減らしrule記号に変える: 横線\mintinline{tex}{\hline}は全て消し、「一番上」に\mintinline{tex}{\toprule}、
+    「ヘッダ直後」に\mintinline{tex}{\midrule}、「一番下」に\mintinline{tex}{\bottomrule} を書きましょう。
+\end{enumerate}
+これでおしまいです。これをやる・やらないだけで全く見栄えが違います。本資料で言いたいことの８割はこれで終わりです。以下は、発展的な内容の紹介です。
+
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{lll} \toprule
+            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
+            オデロ・ヘンリーク  & 173 & 62.2 \\ 
+            オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+        \end{tabular}
+        \caption{\texttt{@\{\}}を使っていない、不揃いなスペーシングの表}
+        \label{tbl:wo_space}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
+            オデロ・ヘンリーク  & 173 & 62.2 \\ 
+            オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+        \end{tabular}
+        \caption{\texttt{@\{\}}を使っている、綺麗なスペーシングの表}
+        \label{tbl:w_space}
+    \end{minipage}
+\end{table}
+
+
+\section{発展編}
+発展編として、良い表を作るための指針や様々な技術について紹介します。
+
+\subsection{行志向}
+\textbf{行が一つの単位}であり、表とは\textbf{行の集合である}ということを年頭に置くとよいです。
+ある一度の測定や、ある一つのデータが、一つの行です。各行は独立しています。
+そして、各行は、概念として「同じレベルのもの」です。プログラム的に言えば「同じ型のインスタンス」です。
+表を「ヘッダ（型の定義）」と「行の集合（インスタンスの集合）」だけで構成できるとわかりやすいです。
+
+\Tref{tbl:good_example}の例では、第一行のヘッダ部分に「名前」など列の説明が記載され、第二行以降の本体部分は「一人のデータが一行」になっています。
+ここで、各行は、順番を並び替えても問題ありません（オデロさんとオリファーさんを入れ替えても大丈夫）。
+実際に表を作るときは並びに気を使い身長順にソートしたりしますが、セマンティックには、各行の入れ替えが可能です。そのような表を目指すとよいです。
+表本体部分について、並び変えるとおかしくなる場合は、表の構成を考え直したり、グラフで表現できないか考えてみるといいです。
+
+booktabsの三種類の横線（\mintinline{tex}{\toprule}, \mintinline{tex}{\midrule}, \mintinline{tex}{\bottomrule}）はこの行志向の表の構成に対応します。
+一番上が\mintinline{tex}{\toprule}で、一番下が\mintinline{tex}{\bottomrule}で、あとは「ヘッダ」と「行の集合」の間に\mintinline{tex}{\midrule}をおきます。そのスタイルが基本です。
+
+上記はもちろん原則です。考えられる例外としては、「合計」とか「平均」の行を最初や最後に置く場合が挙げられると思います（\Tref{tbl:avg1}）。
+合計や平均は他の行に依存するため、他の行から独立していません。また、合計や平均は表の最初か最後の行に書くことが多いでしょう。
+このような例では、\Tref{tbl:avg2}のように、わかりやすくするために「平均」の上に横線を引くこともあると思います。しかし横線の引きすぎには注意してください。
+
+表を作るということは、行志向の原則を可能な限り守りつつ、「読者への情報提示をわかりやすくするにはどうすればよいか」
+「限られた紙面スペースをどう有効活用するか」ということを模索して作っていくものだと言えます。
+
+
+
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
+            オデロ・ヘンリーク  & 173 & 62.2 \\ 
+            オリファー・イノエ  & 178 & 69.5 \\
+            オイ・ニュング      & 167 & 52.1 \\ 
+            平均               & 172.7  & 61.3 \\ \bottomrule   
+        \end{tabular}
+        \caption{最後に平均が記載される例}
+        \label{tbl:avg1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
+            オデロ・ヘンリーク  & 173 & 62.2 \\ 
+            オリファー・イノエ  & 178 & 69.5 \\
+            オイ・ニュング      & 167 & 52.1 \\ \midrule
+            平均               & 172.7  & 61.3 \\ \bottomrule   
+        \end{tabular}
+        \caption{最後に平均が記載し、またその直前に横線を加える例}
+        \label{tbl:avg2}
+    \end{minipage}
+    \hfill
+\end{table}
+
+
+
+\subsection{行のグループ化}
+表を見やすくする一つの方法が行のグループ化です。\Tref{tbl:row_group1}にもともとの表を示します。
+ここではHoge手法と提案手法について、精度と速度を報告しています。また、どちらの手法もパラメータとして$k$があり、
+$k$を変化させて値を報告しています。この表は「一行が一つの観測」となっており、
+行志向の適切な表です。
+
+一方で、一番左の列にはHogeやOursが並んでおり、読者に提示する情報としては冗長です。
+この場合、\Tref{tbl:row_group2}に示すように、冗長な項目を削り行をグループ化してしまうとよいです。
+こうすることで、表としての情報は維持したまま、文章量を削ることが出来ました。
+
+\Tref{tbl:row_group2}で十分であり、これで終わりでOKです。一方で、もし望むのであればHogeやOursを\mintinline{tex}{\multirow}を用いて中心に
+寄せてもよいです。その例が\Tref{tbl:row_group3}です。この場合、横線がないとわかりづらいので、\mintinline{tex}{\midrule}で横線を追加しています。
+\Tref{tbl:row_group2}と\Tref{tbl:row_group3}のどちらが良いかは状況に依存すると思います。
+もし横線をたくさん引かないとわかりづらい表になっているとすれば、それは表を分割するほうが分かりやすい可能性があります。
+
+\begin{table}[h]
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            手法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
+            Hoge  & 16 & 0.32 & 0.21  \\ 
+            Hoge  & 32 & 0.61 & 0.44  \\ 
+            Ours  &  9 & 0.47 & 0.26 \\ 
+            Ours  & 18 & 0.99 & 0.77 \\ \bottomrule   
+        \end{tabular}
+        \caption{もともとの表}
+        \label{tbl:row_group1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            手法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
+            Hoge  & 16 & 0.32 & 0.21  \\ 
+                  & 32 & 0.61 & 0.44  \\ 
+            Ours  &  9 & 0.47 & 0.26 \\ 
+                  & 18 & 0.99 & 0.77 \\ \bottomrule   
+        \end{tabular}
+        \caption{行をグループ化した場合。これでOK。}
+        \label{tbl:row_group2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            手法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
+            \multirow{2}{*}{Hoge}  & 16 & 0.32 & 0.21  \\ 
+                                   & 32 & 0.61 & 0.44  \\ \midrule  
+            \multirow{2}{*}{Ours}  &  9 & 0.47 & 0.26 \\ 
+                                   & 18 & 0.99 & 0.77 \\ \bottomrule   
+        \end{tabular}
+        \caption{さらに中心に寄せ横線を引いた場合。これでもOK。横線の引きすぎに注意。}
+        \label{tbl:row_group3}
+    \end{minipage}
+\end{table}
+
+また、行のグループ化は複数回行うこともできます。例を\Tref{tbl:row_group4}に示します。
+ここでは大学近辺のラーメン屋さん情報をまとめています。
+イメージとしては一列目でソートし冗長な項目を消す、二列目でソートし冗長な項目を消す、と繰り返していくものです。
+やりすぎると見にくくなるので注意しましょう。
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}llll@{}} \toprule
+        最寄り駅 & 店舗名称 & メニュー品目 & 値段（円） \\ \midrule
+        本郷三丁目 & 海手 & なつラーメン & 700 \\
+                  &     & まぜ麺X & 850 \\
+                  & IBASA & ラーメン & 700 \\
+                  &       & 冷たいラーメン & 650 \\
+        東大前  & 用心麺 & ラーメン & 700  \\ 
+              &         & つけ麺 & 800  \\ \bottomrule   
+    \end{tabular}
+    \caption{行のグループ化を二度行った例}
+    \label{tbl:row_group4}
+\end{table}
+
+
+\subsection{行の階層化}
+
+次に、行を階層化するテクニックを紹介します。
+\Tref{tbl:row_hierarchy1}では、お店で販売している品目の情報がまとめられています。これも各行が独立しており、良い表です。
+ここで、種別の情報は冗長なので、「行のグループ化」によりまとめたものが\Tref{tbl:row_hierarchy2}です。これでOKです。
+
+ここでさらに、種別情報を用いて品目を階層化した例が\Tref{tbl:row_hierarchy3}です。
+ここでは種別の列を削除し、それを各品目の上位のものとして表示しています。
+このように、列を削除して要素を字下げすることで、行の階層化を達成できます。ここで字下げは単純に空白を入れることで実現しています。
+詳しくはTeXのソースを見てみてください。
+
+
+\begin{table}[h]
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            品目 & 種別 & 値段（円）& 売り場（階） \\ \midrule
+            豚肉  & 肉 & 300 & 2  \\ 
+            牛肉  & 肉 & 500 & 2  \\ 
+            トマト  & 野菜 & 100 & 3 \\ 
+            キュウリ  & 野菜 & 200 & 3 \\ 
+            キャベツ  & 野菜 & 30 & 4 \\ \bottomrule   
+        \end{tabular}
+        \caption{もともとの表}
+        \label{tbl:row_hierarchy1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            品目 & 種別 & 値段（円）& 売り場（階） \\ \midrule
+            豚肉  & 肉 & 300 & 2  \\ 
+            牛肉  &  & 500 & 2  \\ 
+            トマト  & 野菜 & 100 & 3 \\ 
+            キュウリ  &  & 200 & 3 \\ 
+            キャベツ  & & 30 & 4 \\ \bottomrule   
+        \end{tabular}
+        \caption{種別についてグループ化した例}
+        \label{tbl:row_hierarchy2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            品目  & 値段（円）& 売り場（階） \\ \midrule
+            肉       & & \\
+            ~~豚肉     & 300 & 2  \\ 
+            ~~牛肉     & 500 & 2  \\ 
+            野菜     & & \\
+            ~~トマト   & 100 & 3 \\ 
+            ~~キュウリ & 200 & 3 \\ 
+            ~~キャベツ & 30 & 4 \\ \bottomrule   
+        \end{tabular}
+        \caption{さらに階層化した例}
+        \label{tbl:row_hierarchy3}
+    \end{minipage}
+\end{table}
+
+このような階層化が役立つ例を一つ紹介します。神奈川県の市の経済規模を調査したいとしましょう。
+\Tref{tbl:row_hierarchy4}に、神奈川県総計の情報、および３つの政令指定都市の情報が示されています。
+比較のため、石川県と富山県の情報も載っています。この表も、各行が各地域を表し独立しているため、良い表です。
+一方で、「総計」は県全体を表すのに対し、「横浜市」は市単体を表すため、
+表現の粒度が行によって異なり、直感的に理解しづらいかもしれません。
+
+ここで、行の階層化を行った例が\Tref{tbl:row_hierarchy5}です。
+これによりずっと理解が簡単になりました。ここではたとえば、横浜市は「市」であるにもかかわらず、
+面積では10倍の石川「県」よりも人口が3倍多いことが見てとれます。
+
+注意として、行のグループ化も階層化も、見やすさのために行っているだけだということを意識してください。
+すなわち、いつでも「各行が一つのデータ」である「もともとの表」に戻れるような表にするとよいです。
+
+\begin{table}[h]
+    \begin{minipage}[t]{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            県 & 市 & 面積（${km}^2$） & 人口（人） \\ \midrule
+            神奈川県 & 総計 & 2,416 & 9,237,000 \\
+            神奈川県 & 横浜市 & 437 & 3,774,000 \\
+            神奈川県 & 川崎市 & 143 & 1,542,000 \\
+            神奈川県 & 相模原市 & 328 & 726,000 \\
+            石川県   & 総計 & 4,186 & 1,119,000 \\
+            富山県   & 総計 & 4,247 & 1,018,000 \\ \bottomrule   
+        \end{tabular}
+        \caption{もともとの表}
+        \label{tbl:row_hierarchy4}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            地域 & 面積（${km}^2$） & 人口（人） \\ \midrule
+            神奈川県 & & \\
+            ~~~総計  & 2,416 & 9,237,000 \\
+            ~~~横浜市 & 437 & 3,774,000 \\
+            ~~~川崎市 & 143 & 1,542,000 \\
+            ~~~相模原市 & 328 & 726,000 \\
+            石川県   & 4,186 & 1,119,000 \\
+            富山県   & 4,247 & 1,018,000 \\ \bottomrule   
+        \end{tabular}
+        \caption{行を階層化した例}
+        \label{tbl:row_hierarchy5}
+    \end{minipage}
+\end{table}
+
+
+\subsection{列の階層化}
+
+次に、「列の階層化」を紹介します。列は全て違うものを表すので、列をグループ化することはありませんが、階層化することは出来ます。
+その例を\Tref{tbl:col_hierarchy1}に示します。
+ここでは手法の最小エラー、平均エラー、最大エラーを表示しています。
+これでＯＫなのですが、いちいち毎回ヘッダに「エラー」と書くのは冗長だとも言えます。
+そのような場合、ヘッダの項目を階層化することが出来ます。
+
+階層化した例を\Tref{tbl:col_hierarchy2}に示します。ここでは新たな横線を導入することで、
+もともと別々だった列をまとめることに成功しました。
+ここで、「エラー」と書かれる部分について、複数にまたがる要素は\mintinline{tex}{\multicolumn}コマンドで作成可能です。
+また、「部分横線」は\mintinline{tex}{\cmidrule}というコマンドで記述することが出来ます。
+
+
+
+\begin{table}[h]
+    \begin{minipage}[t]{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            手法 & 最小エラー & 平均エラー & 最大エラー \\ \midrule
+            Isomap & 0.23 & 0.44 & 0.92 \\
+            LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
+        \end{tabular}
+        \caption{もともとの表}
+        \label{tbl:col_hierarchy1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{エラー} \\ \cmidrule(l){2-4}
+            手法 & 最小 & 平均 & 最大     \\ \midrule
+            Isomap & 0.23 & 0.44 & 0.92 \\
+            LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
+        \end{tabular}
+        \caption{列を階層化した例}
+        \label{tbl:col_hierarchy2}
+    \end{minipage}
+\end{table}
+
+
+「列の階層化」も、何度も行うことが出来ます。その例を\Tref{tbl:col_hierarchy3}に示します。ここでは様々な県の情報を表示しています。
+気温や降水量について、階層化を行うことで見やすくなっています。また、単位の記述を上部に集約するなどして、横方向にだいぶ縮めることが出来ています。
+階層化させていない項目（県名や人口密度）も同じ表に表示させることが可能です。
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}lllllllll@{}} \toprule
+        & \multicolumn{3}{c}{気温（$\mathrm{^\circ C}$）} & \multicolumn{2}{c}{降水量（mm）} & \multicolumn{2}{c}{交通の便} & \\ \cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+        県名 & 最高 & 平均 & 最低 & 8月 & 12月 & 新幹線 & 空港 & 人口密度（人/${km}^2$） \\ \midrule
+        石川県 & 32 & 20 & -1 & 179.8 & 304.7 & \checkmark & \checkmark & 267 \\
+        静岡県 & 27 & 23 & 5 & 250.9 & 63.0 & \checkmark & \checkmark & 461 \\
+        沖縄県 & 33 & 28 & 15 & 175.4 & 104.4 &  & \checkmark & 643 \\ \bottomrule
+    \end{tabular}
+    \caption{列の階層化を複数回行った表}
+    \label{tbl:col_hierarchy3}
+\end{table}
+
+
+
+\subsection{部分横線：cmidrule}
+
+ここで、「列の階層化」で登場した\mintinline{tex}{\cmidrule}について知っておきましょう。\Tref{tbl:col_hierarchy2}のソースコードは以下のようになります。
+
+\begin{minted}[mathescape, % 数式使える
+    linenos, % 行番号
+    fontfamily=courier, % いい感じのフォント
+    breaklines, % 長すぎる行をうまく改行
+    %breakindent=20pt, % 改行後の左からの幅
+    %fontsize=\small, % フォントサイズ
+    %numbersep=2pt, % 行番号の内側よせ余白
+    frame=single, % lines:上下に線 single:線で囲う
+    %baselinestretch=0.7, % 行間
+    ]{tex}
+\begin{tabular}{@{}llll@{}} \toprule
+           & \multicolumn{3}{c}{エラー} \\ \cmidrule(l){2-4}
+    手法   & 最小 & 平均 & 最大           \\ \midrule
+    Isomap & 0.23 & 0.44 & 0.92         \\
+    LLE    & 0.10 & 0.73 & 1.82         \\ \bottomrule
+\end{tabular}
+\end{minted}
+
+\mintinline{tex}{\cmidrule(l){2-4}}において、「\texttt{l}」の部分は、横線の両端を削るかどうかを意味しています。\texttt{l}であれば左を、\texttt{r}であれば右を、\texttt{lr}であれば両端を削ります。
+この少しの削りで、表の見栄えを調整します。
+その例を\Tref{tbl:cmidrule1}から\Tref{tbl:cmidrule4}に記載しておきました。微妙な違いなのですが、知っておくと便利です。
+\texttt{\{2-4\}}の部分は、対応する列数です。これはいじりながら調整すればよいでしょう。
+
+\begin{table}[h]
+    \begin{minipage}[t]{0.24\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{エラー} \\ \cmidrule(){2-4}
+            手法 & 最小 & 平均 & 最大     \\ \midrule
+            Isomap & 0.23 & 0.44 & 0.92 \\
+            LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
+        \end{tabular}
+        \caption{\texttt{cmidrule()\{2-4\}}}
+        \label{tbl:cmidrule1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.24\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{エラー} \\ \cmidrule(l){2-4}
+            手法 & 最小 & 平均 & 最大     \\ \midrule
+            Isomap & 0.23 & 0.44 & 0.92 \\
+            LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
+        \end{tabular}
+        \caption{\texttt{cmidrule(\textcolor{red}{l})\{2-4\}}}
+        \label{tbl:cmidrule2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.24\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{エラー} \\ \cmidrule(r){2-4}
+            手法 & 最小 & 平均 & 最大     \\ \midrule
+            Isomap & 0.23 & 0.44 & 0.92 \\
+            LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
+        \end{tabular}
+        \caption{\texttt{cmidrule(\textcolor{blue}{r})\{2-4\}}}
+        \label{tbl:cmidrule3}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.24\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{エラー} \\ \cmidrule(lr){2-4}
+            手法 & 最小 & 平均 & 最大     \\ \midrule
+            Isomap & 0.23 & 0.44 & 0.92 \\
+            LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
+        \end{tabular}
+        \caption{\texttt{cmidrule(\textcolor{red}{l}\textcolor{blue}{r})\{2-4\}}}
+        \label{tbl:cmidrule4}
+    \end{minipage}
+\end{table}
+
+ちなみに、\Tref{tbl:col_hierarchy3}では\mintinline{tex}{\cmidurle}は「\mintinline{tex}{\cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}}」
+のように全ての線に「lr」を付けて、線の両端を削る形で記述されていました。これを削らない場合を\Tref{tbl:cmidrule5}に示します。
+ここでは\mintinline{tex}{\cmidrule(){2-4}}のようにすべての「lr」を取っています。
+よって、「気温」「降水量」「交通の便」の間の線がつながってしまっていることがわかります。
+ここでは適切に空白を入れるほうがわかりやすい表になります。
+
+
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}lllllllll@{}} \toprule
+        & \multicolumn{3}{c}{気温（$\mathrm{^\circ C}$）} & \multicolumn{2}{c}{降水量（mm）} & \multicolumn{2}{c}{交通の便} & \\ \cmidrule(){2-4} \cmidrule(){5-6} \cmidrule(){7-8}
+        県名 & 最高 & 平均 & 最低 & 8月 & 12月 & 新幹線 & 空港 & 人口密度（人/${km}^2$） \\ \midrule
+        石川県 & 32 & 20 & -1 & 179.8 & 304.7 & \checkmark & \checkmark & 267 \\
+        静岡県 & 27 & 23 & 5 & 250.9 & 63.0 & \checkmark & \checkmark & 461 \\
+        沖縄県 & 33 & 28 & 15 & 175.4 & 104.4 &  & \checkmark & 643 \\ \bottomrule
+    \end{tabular}
+    \caption{\Tref{tbl:col_hierarchy3}でcmidruleの削りを適切に設定しなかった場合}
+    \label{tbl:cmidrule5}
+\end{table}
+
+
+
+\subsection{列を行に移す}
+列の情報を行に移すことで表がスッキリする場合があります。この技術はオススメ\textbf{では無い}のですが、現実的に遭遇する場面が多いため紹介します。
+例を用いて説明します。\Tref{tbl:col2row1}がもともとの表です。
+ここでは２つの手法を３つのデータセットで評価し、実行時間を報告しています。各行が１つの観測に対応する、良い表です。
+手法に関して行をグループ化しています。この表はこれでオシマイでいいのですが、以下の二点の要請があり得ます。
+\begin{itemize}
+    \item 同じDatasetで手法を見比べたいが、値の位置が離れている。例えばMNIST上でのk-means (10.2)とOurs (8.3)が離れている。
+    \item MethodやDatasetが増えていくと、表が縦長になってしまう。横長にしたい。
+\end{itemize}
+このような場合、どうするとよいでしょうか？
+
+\textbf{一つの列（ここではDataset）を行方向に移す}ということが考えられます。「一つのデータ（一つの行）」を、「手法・データセット・実行時間」ではなく、
+「手法・データセット１の実行時間・データセット２の実行時間・データセット３の実行時間」
+と考え直すということです。そうしたものを\Tref{tbl:col2row2}に示します。
+これにより、２つの要請である「同じデータセットでの値の位置を近くする」「横長にする」はクリアすることが出来ました。一方で、ヘッダ部分が明らかに冗長になってしまっています。
+
+\begin{table}[h]
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            Method & Dataset & Runtime (ms) \\ \midrule
+            k-means   & MNIST    & 10.2 \\ 
+                      & ImageNet & 45.3 \\ 
+                      & Places   & 57.1 \\ 
+            Ours      & MNIST    & 8.3 \\ 
+                      & ImageNet & 39.1 \\ 
+                      & Places   & 82.3 \\ \bottomrule   
+        \end{tabular}
+        \caption{もともとの表}
+        \label{tbl:col2row1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.67\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+                   & Runtime (ms) for & Runtime (ms) for & Runtime (ms) for         \\
+            Method & Dataset=MNIST & Dataset=ImageNet & Dataset=Places \\ \midrule
+            k-means   & 10.2 & 45.3 & 57.1 \\ 
+            Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
+        \end{tabular}
+        \caption{Datasetの列を行に移したもの。ヘッダが冗長。}
+        \label{tbl:col2row2}
+    \end{minipage}
+\end{table}
+
+これに対し「列の階層化」を適用したものが\Tref{tbl:col2row3}です。
+だいぶ良くなりました。ここでオシマイでもOKです。
+しかしここでは「Dataset=」という記述がヘッダに３度登場し、冗長です。
+これをさらにスッキリさせる２つのアイデアが\Tref{tbl:col2row4}と\Tref{tbl:col2row5}です。
+
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}llll@{}} \toprule
+                & \multicolumn{3}{c}{Runtime (ms)}  \\ \cmidrule(l){2-4}
+        Method & Dataset=MNIST & Dataset=ImageNet & Dataset=Places \\ \midrule
+        k-means   & 10.2 & 45.3 & 57.1 \\ 
+        Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
+    \end{tabular}
+    \caption{行を階層化したもの。マシになったが、「Dataset=」の部分がまだ冗長。}
+    \label{tbl:col2row3}
+\end{table}
+
+
+\Tref{tbl:col2row4}では、\Tref{tbl:col2row3}から「Dataset=」の部分を取り除いています。
+これで表は見やすくなりました。今回の表の場合はこれでも意味が通じるでしょう。一方で、ここでは「Dataset=」という記述が
+どこにも書かれていないことになるため、「MNIST」の部分が一体何なのかわかりません。
+よって、このパターンはRuntime以下の階層が説明なしに伝わる場合にしか使えないでしょう。
+
+
+\Tref{tbl:col2row5}では、\Tref{tbl:col2row3}から「Runtmie (ms)」を取り除き、
+その位置に「Dataset」を記入しています。
+これが一番スッキリします。一方で、この場合は表の値が何なのかという情報が抜け落ちるため、
+キャプションに「これはRuntime (ms)の表です」という記述を追加する必要があります。
+これは、「表が単一種類の値のみで構成されている場合、その値の説明をキャプションで行うことで、ヘッダに表示する情報を減らし、表をスッキリさせることができる場合がある」ということです。
+ちなみに、この単一種類の値の表は、本資料の他の表と違う特長を持ちます。
+すわなち、ヘッダが要素の説明になっていません。個人的にはこの方式はあまり好きではなく、ヘッダが要素説明になっているほうがいいと思います。
+一方で、スペースの要請からどうしてもそのようにする場面もあるでしょう。
+
+
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+                   & \multicolumn{3}{c}{Runtime (ms)}  \\ \cmidrule(l){2-4}
+            Method & MNIST & ImageNet & Places \\ \midrule
+            k-means   & 10.2 & 45.3 & 57.1 \\ 
+            Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
+        \end{tabular}
+        \caption{「Dataset=」を省略した場合。見やすくなったが、「Dataset=」の情報はどこにも記述できない。}
+        \label{tbl:col2row4}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+                   & \multicolumn{3}{c}{Dataset}  \\ \cmidrule(l){2-4}
+            Method & MNIST & ImageNet & Places \\ \midrule
+            k-means   & 10.2 & 45.3 & 57.1 \\ 
+            Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
+        \end{tabular}
+        \caption{「Runtime (ms)」を省略した場合。一番スッキリするが、「Runtime (ms)の表である」という情報をキャプションに記述する必要がある。}
+        \label{tbl:col2row5}
+    \end{minipage}
+\end{table}
+
+さて、そもそも今回色々な表を考えたのは、Method方向・Dataset方向のどちらにも注目したかったからです。
+表は行と列しかないので、二軸に注目する情報を提示する場合は、\Tref{tbl:col2row4}や\Tref{tbl:col2row5}のようにどうしてもマトリクス的な表現になってしまいます。
+よって、「一つの行は一つの観測」の原則からだんだん離れていってしまいます。
+そのような場合、グラフの使用も検討してください。同じ情報をグラフで提示したものが\Fref{fig:single_val}です。
+ここでは「あるデータセットにおける手法の比較」も「ある手法に関してデータセットを変えた際の比較」も可能です。
+また今回は、データセット・手法を増やしてもグラフ上のスペースは変わりません。さらに、エラーバー追加や箱髭図への変更も可能です。
+一方で、グラフを用いる弱点は具体的な数値が表現されないことです。例えば既存手法との数値の比較が必要な際はグラフは使いにくいかもしれません。
+表とグラフのメリットデメリットを考えながら、最も有効な情報表現を考えていくとよいでしょう。
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{script/single_val.pdf}
+    \caption{\Tref{tbl:col2row4}や\Tref{tbl:col2row5}をグラフにしたもの。}
+    \label{fig:single_val}
+\end{figure}
+
+
+
+
+
+\subsection{表の作成で悩んだら}
+表の作成で悩んだ場合、以下を順番にやってみましょう。
+\begin{enumerate}
+    \item 「一行が１つのデータ」の原則になるまで、表を分解する。とても縦に長くなってもOK。
+    \item 一番重要な項目について、「行のグループ化」を繰り返す。必要に応じて「行の階層化」も行う。
+    \item 必要に応じて「列のグループ化」を行う。
+    \item それでもまだおさまりが悪ければ、「列を行に移す」を行い、「行の階層化」を行う。冗長な記述を省略する。
+    \item それでもまだおさまりが悪ければ、グラフの使用を検討する。
+\end{enumerate}
+
+
+\section{ケーススタディ}
+
+さて、いくつか例をあげて、表をどのように綺麗にするか見ていきましょう。まずは\Tref{tbl:use_case1}、\Tref{tbl:use_case2}、\Tref{tbl:use_case3}を考えます。
+ここではパラメータを変えた際の各手法の精度を報告しています。これらは全て同じ情報を示そうとしていますが、ありがちなミスを含んでいます。
+
+まず\Tref{tbl:use_case1}から見てみましょう。ここでは、パラメータ$T$を変化させたときの、ResNet50と提案手法のスコアの変動を表現しています。
+この表は一見こぎれいにまとまっているように見えます。しかしよく見ると、ヘッダであるべき一行目はヘッダになっていないことがわかります。たとえばResNet50の上には「Method」という
+情報が来るべきですが、ここでは$T$になってしまっています。また、「0.32」の上は「1」になっており、これも説明になっていません。なので、これは「ヘッダ + 行の集合」のイケている表にはなっていません。
+加えて、この表には要素の情報（精度であるということ）が記載されていません。すなわち、この数字が何なのかわかりません。キャプションに書く必要があります。このような小さい表ではキャプションを使わずに
+表中に全て記載するほうがスッキリする可能性が高いです。
+
+同じ情報を、\Tref{tbl:use_case2}のように書いてしまうことも多いでしょう。ここでは、左上のマスに「斜め線」と「両軸の情報」を記載しています。
+この方式は小学校や中学校で習うため、ついこう書いてしまう人が多いようです。
+しかし、これもまた、「ヘッダ + 行の集合」形式になっていません。
+加えて、この方式を書くときは縦線を記入してしまうことが多いようです。
+
+あるいは、\Tref{tbl:use_case3}のように書くかもしれません。これは\Tref{tbl:use_case1}に比べて少し良くなり、0.32の上は「$T=1$」であることがわかります。
+しかし、「数字が何なのか」は、やはりわかりません。
+
+\begin{table}[h]
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            $T$ & 1 & 4 & 16 \\ \midrule
+            ResNet50  & 0.32 & 0.54 & 0.77 \\ 
+            Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
+        \end{tabular}
+        \caption{ありがちな例その１}
+        \label{tbl:use_case1}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \begin{tabular}{|l|lll|} \hline
+            Method \textbackslash ~ $T$ & 1 & 4 & 16 \\ \hline
+            ResNet50  & 0.32 & 0.54 & 0.77 \\ 
+            Ours      & 0.41 & 0.81 & 1.23 \\ \hline
+        \end{tabular}
+        \caption{ありがちな例その２}
+        \label{tbl:use_case2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & $T=1$ & $T=4$ & $T=16$ \\ \midrule
+            ResNet50  & 0.32 & 0.54 & 0.77 \\ 
+            Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
+        \end{tabular}
+        \caption{ありがちな例その３}
+        \label{tbl:use_case3}
+    \end{minipage}
+\end{table}
+
+さて、この表を良くするにはどうすればいいでしょうか？まず、「一行が一つのデータ」になるまで分解してみます。
+ここでの「一つのデータ」とは、「ある手法で、あるパラメータ$T$で、測定結果である精度（mAP）」になります。
+その結果が\Tref{tbl:use_case4}です。ここでは、各要素が「精度」であると言う点をちゃんとヘッダに記述できています。これで終わりでもいいのですが、もう少し考えてみましょう。
+実はこの表は\Tref{tbl:col2row1}と同じ構造をしています。なので、「$T$の列を行に移す」「列を階層化する」を行い、\Tref{tbl:use_case5}
+のようにまとめることが出来ます。これは\Tref{tbl:col2row1}を\Tref{tbl:col2row3}にしたものに相当します。
+ここでは$T=1$といった記述は十分短いなので、この表が一番見やすく情報を提示できているでしょう。
+\Tref{tbl:use_case3}に比べると、「mAP」という情報を表の中に記述できており、また「Method」という説明も追加されています。
+
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            Method & $T$ & mAP \\ \midrule
+            ResNet50 & 1  & 0.32 \\
+                    & 4  & 0.54 \\
+                    & 16 & 0.77 \\
+            Ours     & 1  & 0.41 \\
+                    & 4  & 0.81 \\
+                    & 16 & 1.23 \\ \bottomrule   
+        \end{tabular}
+        \caption{「一行が一つのデータ」になるまで分解した場合}
+        \label{tbl:use_case4}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{mAP} \\ \cmidrule(l){2-4}
+            Method & $T=1$ & $T=4$ & $T=16$ \\ \midrule
+            ResNet50  & 0.32 & 0.54 & 0.77 \\ 
+            Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
+        \end{tabular}
+        \caption{$T$列を行に移し、列を階層化した場合。今回はこれが一番見やすい。}
+        \label{tbl:use_case5}
+    \end{minipage}
+\end{table}
+
+ここで、\Tref{tbl:col2row4}や\Tref{tbl:col2row5}のようにさらに省略を行うとどうなるでしょうか？それを\Tref{tbl:use_case6}、\Tref{tbl:use_case7}に示します。
+\Tref{tbl:use_case6}では、「$T=$」の部分を省略しています。今回はこの省略は有効ではありません。「1, 4, 16が何なのか」がわからなくなってしまっています。なのでこれはやめておいたほうがいいですね。
+\Tref{tbl:use_case7}では、「mAP」の部分を省略しています。この場合、その情報をキャプションに書く必要があります。今回の例ではここまで省略する必要はなさそうです。
+
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{mAP} \\ \cmidrule(l){2-4}
+            Method & 1 & 4 & 16 \\ \midrule
+            ResNet50  & 0.32 & 0.54 & 0.77 \\ 
+            Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
+        \end{tabular}
+        \caption{「$T=$」を省略した場合。ここでは1, 4, 16の意味が通じなくなってしまっており、よくない表になっている。}
+        \label{tbl:use_case6}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            & \multicolumn{3}{c}{$T$} \\ \cmidrule(l){2-4}
+            Method & 1 & 4 & 16 \\ \midrule
+            ResNet50  & 0.32 & 0.54 & 0.77 \\ 
+            Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
+        \end{tabular}
+        \caption{「mAP」を省略した場合。「mAPの図である」という記述をキャプションに書く必要がある。}
+        \label{tbl:use_case7}
+    \end{minipage}
+\end{table}
+
+ちなみに、今回もグラフにすることが出来ます。それを\Fref{fig:use_case}に示します。ここでは$T$は変化させることができる連続量なので、
+棒グラフではなく折れ線グラフにしています。グラフと表のどちらがいいかは、状況に応じて決めてください。
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{script/use_case.pdf}
+    \caption{\Tref{tbl:use_case5}をグラフにしたもの。}
+    \label{fig:use_case}
+\end{figure}
+
+
+
+
+
+
+さて、別の例も見てみましょう。次は\Tref{tbl:use_case8}を見てます。
+この例は\Tref{tbl:use_case1}に似ています。おさまりは良く見えますが、一行目がヘッダになっていない、イマイチな表です。
+しかも、\Tref{tbl:use_case1}では一列目を「Method」としてまとめられたのに対し、この例ではそれに相当するうまい単語がありません。どうすればよいでしょうか。
+今回の場合は実は、じっと眺めていると、行と列を全て入れ替えた\Tref{tbl:use_case9}のほうが、「各行が１つのデータ」に対応する
+スッキリした表になっていることがわかります。なので、行志向を目指す考えのもとでは\Tref{tbl:use_case8}のほうが良い表であると言えます。
+一方で、ここではヘッダ部分の項目が長すぎて、表中に空白が目立っています。
+スペースを有効活用するためにどうするかは、腕の見せどころです。例えば単位を改行したりするといいかもしれません。
+
+\begin{table}[h]
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}llll@{}} \toprule
+            $T$ & 1 & 4 & 16 \\ \midrule
+            Runtime (sec)       & 102 & 110 & 159 \\ 
+            Memory (B)  & 100 & 200 & 300 \\ \bottomrule   
+        \end{tabular}
+        \caption{もともとの表}
+        \label{tbl:use_case8}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \begin{tabular}{@{}lll@{}} \toprule
+            $T$ & Runtime (sec) & Memory (B) \\ \midrule 
+            1 & 102 & 100 \\
+            4 & 110 & 200 \\
+            16 & 159 & 300 \\ \bottomrule 
+        \end{tabular}
+        \caption{行と列を入れ替えた表}
+        \label{tbl:use_case9}
+    \end{minipage}
+\end{table}
+
+
+
+
+
+\end{document}  
