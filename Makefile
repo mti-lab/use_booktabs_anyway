@@ -11,8 +11,8 @@ build_jp:
 	dvipdfmx main.dvi -o main.pdf
 
 build_cn:
-	uplatex -shell-escape ./src/main_cn.tex 
-	uplatex -shell-escape ./src/main_cn.tex 
+	xelatex -shell-escape ./src/main_cn.tex 
+	xelatex -shell-escape ./src/main_cn.tex 
 	dvipdfmx main_cn.dvi -o main_cn.pdf
 
 clean:

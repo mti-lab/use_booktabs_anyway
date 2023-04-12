@@ -1,8 +1,8 @@
 \RequirePackage{plautopatch}  % From https://qiita.com/wtsnjp/items/76557b1598445a1fc9da
 
-\documentclass[uplatex,onecolumn,9pt,dvipdfmx]{jsarticle}
-
-\usepackage[dvipdfmx]{hyperref,graphicx}
+\documentclass{article}
+\usepackage{xeCJK}
+\usepackage{hyperref,graphicx}
 
 % To fix garbled text in the table of contents
 \usepackage{pxjahyper}
@@ -17,12 +17,6 @@
 }
 
 \usepackage[left=1.5cm, right=1.5cm, top=2cm, bottom=3cm]{geometry}
-
-% Beautiful Japanese font %
-% Install noto fonts by $ sudo apt install fonts-noto
-% You need to use uplatex. 
-\usepackage[deluxe]{otf}
-\usepackage[noto-otc]{pxchfon}
 
 % For beautiful source-code
 % https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
@@ -43,477 +37,477 @@
 % Alias
 \newcommand{\Tref}[1]{表\ref{#1}}
 \newcommand{\Eref}[1]{式\ref{#1}}
-\newcommand{\Fref}[1]{図\ref{#1}}
+\newcommand{\Fref}[1]{图\ref{#1}}
 \newcommand{\Aref}[1]{アルゴリズム\ref{#1}}
 \newcommand{\Sref}[1]{\ref{#1}章}
 
+\renewcommand\tablename{表}
+\renewcommand\figurename{图}
+
 \newcommand{\todo}[1]{\textbf{\textcolor{cyan}{[\textsc{TODO:} #1]}}}
+
+\usepackage[fontsize=9pt]{fontsize}
+\usepackage{indentfirst}
+\setlength{\parindent}{2em}
+\linespread{1.2}
 
 \begin{document}
 
-\title{とにかくbooktabsを使おう}
-\author{東京大学　情報理工学系研究科　講師　松井勇佑}
-\date{初版 2022年9月5日 / 最終更新 2022年12月22日}
+\title{总而言之来使用 booktabs 吧}
+\author{东京大学　情报理工学系研究科　讲师　松井勇佑}
+\date{初版 2022年9月5日 / 更新日期 2023年1月23日}
 \maketitle
 
 \begin{screen}
     \begin{itemize}
-    \item 本資料のGitHubリポジトリ： \url{https://github.com/matsui528/use_booktabs_anyway}
-    \item 著者のウェブページ：\url{http://yusukematsui.me}
+    \setlength{\itemsep}{-0.5ex}
+    \item 本资料的GitHub仓库： \url{https://github.com/matsui528/use_booktabs_anyway}
+    \item 作者的主页：\url{http://yusukematsui.me}
     \end{itemize}
 \end{screen}
 
-\section{はじめに}
-
-論文に表を記載する際、booktabsパッケージを使いましょう。
-booktabsは通常のTeXの表に対し適切な線の使用やスペースの配置を補助してくれるパッケージです。
-booktabsを使うだけで表がシュッと綺麗になります。
-それだけでなく、booktabs流の表の作り方（行を基本とする思考、縦線を入れない、など）
-を考えていくと、論理的にわかりやすい表になります。以下の２つが基本的な文献です。
+\section{序言}
+在论文中插入表格时，来使用booktabs的宏包吧。
+booktabs是在一般Tex表格基础上，可对线和宽度进行适当调整的宏包。
+仅通过使用booktabs就能轻松让表格变得整洁美观。
+不仅如此，按照booktabs的思路（以行为本、不插入竖线等）来制作表格的话，会使制成的表格更加清晰易懂。以下是两篇基础文献。
 \begin{itemize}
-    \item \href{http://mirrors.ctan.org/macros/latex/contrib/booktabs/booktabs.pdf}{公式ドキュメント}。細かいオプションなどはCTANの公式ドキュメントを参照しましょう。
-    \item \href{https://people.inf.ethz.ch/markusp/teaching/guides/guide-tables.pdf}{Markus P\"{u}schel, ``Small Guide to Making Nice Tables''}. 本資料と同じ立ち位置の、booktabs紹介記事です。
+    \setlength{\itemsep}{-0.5ex}
+    \item \href{http://mirrors.ctan.org/macros/latex/contrib/booktabs/booktabs.pdf}{官方文档}。细节的设定等请参照CTAN的官方文档。
+    \item \href{https://people.inf.ethz.ch/markusp/teaching/guides/guide-tables.pdf}{Markus P\"{u}schel, ``Small Guide to Making Nice Tables''}. 与本资料同样是介绍booktabs的文章。
 \end{itemize}
-本文章は上記文献と松井の経験則をベースにしています。間違いや、より良い方法もあると思います。提案やコメントやミスの指摘などがあればぜひissueでお願いします。
+本文以上述文献和我的个人经验为基础，可能存在错误或更好的方法。如果有感想建议或者有想指出的错误的话，请务必在issue提出。
 
 
-\section{基本的な使い方}
-次の２つの表を考えましょう。
+\section{基本使用方法}
+请看下面两个表格。
+
+
 \begin{table}[h]
     \begin{minipage}{0.48\linewidth}
         \centering
         \begin{tabular}{|c|c|c|} \hline
-            名前 & 身長 (cm) & 体重 (kg) \\ \hline
-            オデロ・ヘンリーク  & 173 & 62.2 \\ \hline 
-            オリファー・イノエ  & 178 & 69.5 \\ \hline   
+            姓名 & 身高 (cm) & 体重 (kg) \\ \hline
+            奥迪罗·汉宁古  & 173 & 62.2 \\ \hline 
+            奥利法·伊诺埃  & 178 & 69.5 \\ \hline   
         \end{tabular}
-        \caption{通常の表}
+        \caption{普通表格}
         \label{tbl:bad_example}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\linewidth}
         \centering
         \begin{tabular}{@{}lll@{}} \toprule
-            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
-            オデロ・ヘンリーク  & 173 & 62.2 \\ 
-            オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+            姓名 & 身高 (cm) & 体重 (kg) \\ \midrule
+            奥迪罗·汉宁古  & 173 & 62.2 \\ 
+            奥利法·伊诺埃  & 178 & 69.5 \\ \bottomrule   
         \end{tabular}
-        \caption{booktabsを用いた表}
+        \caption{使用booktabs的表格}
         \label{tbl:good_example}
     \end{minipage}
 \end{table}
 
-左は通常のTeXの機能でなんとなく作った表です。多分最初に作る表はこんな感じになると思います。
-右は同じ内容をbooktabsを使って整えた例です。シュッとしていてカッコいいですよね？
-ここで、左側の表のtexのソースは以下です。 
+
+左边是使用Tex的一般功能制作出的表格，估计大家最开始做的表格都是这种感觉的吧。
+右边是使用booktabs对相同内容进行整理后的例子。是不是变得整洁又大方了呢？
+左侧表格的tex代码如下所示。
 \begin{minted}[mathescape, % 数式使える
     linenos, % 行番号
     fontfamily=courier, % いい感じのフォント
     breaklines, % 長すぎる行をうまく改行
     %breakindent=20pt, % 改行後の左からの幅
-    %fontsize=\small, % フォントサイズ
+    fontsize=\small, % フォントサイズ
     %numbersep=2pt, % 行番号の内側よせ余白
     frame=single, % lines:上下に線 single:線で囲う
     %baselinestretch=0.7, % 行間
     ]{tex}
-% 「表1 通常の表」
+% “表1 普通表格”
 \begin{tabular}{|c|c|c|} \hline
-    名前 & 身長 (cm) & 体重 (kg) \\ \hline
-    オデロ・ヘンリーク  & 173 & 62.2 \\ \hline 
-    オリファー・イノエ  & 178 & 69.5 \\ \hline   
+    姓名 & 身高 (cm) & 体重 (kg) \\ \hline
+    奥迪罗·汉宁古  & 173 & 62.2 \\ \hline 
+    奥利法·伊诺埃  & 178 & 69.5 \\ \hline  
 \end{tabular}
 \end{minted}
-一方で、右側のbooktabsを用いたソースは次のようになっています。
+与之相对地，右侧使用booktabs的表格的代码如下所示。
 \begin{minted}[mathescape, % 数式使える
     linenos, % 行番号
     fontfamily=courier, % いい感じのフォント
     breaklines, % 長すぎる行をうまく改行
     %breakindent=20pt, % 改行後の左からの幅
-    %fontsize=\small, % フォントサイズ
+    fontsize=\small, % フォントサイズ
     %numbersep=2pt, % 行番号の内側よせ余白
     frame=single, % lines:上下に線 single:線で囲う
     %baselinestretch=0.7, % 行間
     ]{tex}
-% 「表2 booktabsを用いた表」
+% “表2 使用booktabs的表格”
 \begin{tabular}{@{}lll@{}} \toprule
-    名前 & 身長 (cm) & 体重 (kg) \\ \midrule
-    オデロ・ヘンリーク  & 173 & 62.2 \\ 
-    オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+    姓名 & 身高 (cm) & 体重 (kg) \\ \midrule
+    奥迪罗·汉宁古  & 173 & 62.2 \\ 
+    奥利法·伊诺埃  & 178 & 69.5 \\ \bottomrule  
 \end{tabular}
 \end{minted}
-ここで左の表を右の表に変換する機械的なルールを紹介します。以下の手続きを行えばOKです。
+接下来将介绍将左边表格变换成右边表格的机械化规则。按照以下步骤来做就可以实现了。
 \begin{enumerate}
-    \item booktabsパッケージをインポートする: ソースコード中の最初のほうで\mintinline{tex}{\usepackage{booktabs}}として 
-    パッケージをインポートしましょう。これを忘れると当然うまくいきません。
-    \item 縦線を取り除く：\Tref{tbl:bad_example}では列指定オプションは \mintinline{tex}{{|c|c|c|}} となっています。ここから縦線を取り除きます。
-    すなわち、\mintinline{tex}{{ccc}} とします。基本的に表の縦線は必要ない場合が多いです。縦線がどうしても必要な場合は、表を分割するほうが良い場合が多いです。
-    \item 左揃えにする：すなわち、\mintinline{tex}{{ccc}} だったものを \mintinline{tex}{{lll}} とします。まずは全てを左揃えにすることをオススメします。そのうえで見栄えが悪ければ中央や右揃えを考えましょう。
-    \item 魔法のスペーサー記号をつける： \mintinline{tex}{@{}} という魔法のスペーサー記号を列指定オプションの両端につけます。
-    すなわち、\mintinline{tex}{{lll}} だったものを \mintinline{tex}{{@{}lll@{}}} とします。これを忘れる人が多いです。
-    このスペーサーをつけると、表の両端の余分な空白がなくなり、見栄えが良くなります。
-    スペーサーがない不揃いな例が\Tref{tbl:wo_space}で、スペーサーがある綺麗な例が\Tref{tbl:w_space}です。
-    \item 横線を減らしrule記号に変える: 横線\mintinline{tex}{\hline}は全て消し、「一番上」に\mintinline{tex}{\toprule}、
-    「ヘッダ直後」に\mintinline{tex}{\midrule}、「一番下」に\mintinline{tex}{\bottomrule} を書きましょう。
+    \setlength{\itemsep}{-0.5ex}
+    \item 导入booktabs的宏包：在代码起始位置添加\mintinline{tex}{\usepackage{booktabs}}来导入宏包。忘记这一步的话肯定是无法顺利进行下去的。
+    \item 去除竖线：\Tref{tbl:bad_example}里的列的设定为 \mintinline{tex}{{|c|c|c|}}。要通过修改这个地方来把竖线去掉，也就是说，将它改为 \mintinline{tex}{{ccc}}。表格里基本上是不需要竖线的。无论如何都需要竖线时，大多数情况下把表格进行分割会更好。
+    \item 设置为左对齐：也就是把 \mintinline{tex}{{ccc}} 改为 \mintinline{tex}{{lll}}。推荐首先全部进行左对齐，如果觉得不够美观的话再考虑居中或者右对齐。
+    \item 添加神奇的间隔符：把神奇的间隔符 \mintinline{tex}{@{}} 添加到列的设置的两端。
+    即把 \mintinline{tex}{{lll}} 改成 \mintinline{tex}{{@{}lll@{}}}。很多人容易忘记这一步。
+    添加了这个间隔符的话，可以去掉表格两端多余的空白，使表格看上去更加美观。
+    未添加间隔符的不够整洁的表格如\Tref{tbl:wo_space}所示，添加了间隔符后变美观的表格如\Tref{tbl:w_space}所示。
+    \item 删除横线并改成rule符号：把横线\mintinline{tex}{\hline}全部删除，“上框线”用\mintinline{tex}{\toprule}、
+    “表头后”用\mintinline{tex}{\midrule}、“下框线”用\mintinline{tex}{\bottomrule}。
 \end{enumerate}
-これでおしまいです。これをやる・やらないだけで全く見栄えが違います。本資料で言いたいことの８割はこれで終わりです。以下は、発展的な内容の紹介です。
+这样就完成了。只是通过增加或删除操作就能带来截然不同的视觉效果。到这里本资料所要传达的内容已经实现了八成。接下来是扩展内容的介绍。
 
 \begin{table}[h]
     \begin{minipage}{0.48\linewidth}
         \centering
         \begin{tabular}{lll} \toprule
-            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
-            オデロ・ヘンリーク  & 173 & 62.2 \\ 
-            オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+            姓名 & 身高 (cm) & 体重 (kg) \\ \midrule
+            奥迪罗·汉宁古  & 173 & 62.2 \\ 
+            奥利法·伊诺埃  & 178 & 69.5 \\ \bottomrule  
         \end{tabular}
-        \caption{\texttt{@\{\}}を使っていない、不揃いなスペーシングの表}
+        \caption{未使用\texttt{@\{\}}的不够整洁的表格}
         \label{tbl:wo_space}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\linewidth}
         \centering
         \begin{tabular}{@{}lll@{}} \toprule
-            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
-            オデロ・ヘンリーク  & 173 & 62.2 \\ 
-            オリファー・イノエ  & 178 & 69.5 \\ \bottomrule   
+            姓名 & 身高 (cm) & 体重 (kg) \\ \midrule
+            奥迪罗·汉宁古  & 173 & 62.2 \\ 
+            奥利法·伊诺埃  & 178 & 69.5 \\ \bottomrule  
         \end{tabular}
-        \caption{\texttt{@\{\}}を使っている、綺麗なスペーシングの表}
+        \caption{使用\texttt{@\{\}}后变美观的表格}
         \label{tbl:w_space}
     \end{minipage}
 \end{table}
 
 
-\section{発展編}
-発展編として、良い表を作るための指針や様々な技術について紹介します。
+\section{扩展篇}
+扩展篇将介绍制作优秀表格的方针和各种技术。
 
-\subsection{行志向}
-\textbf{行が一つの単位}であり、表とは\textbf{行の集合である}ということを年頭に置くとよいです。
-ある一度の測定や、ある一つのデータが、一つの行です。各行は独立しています。
-そして、各行は、概念として「同じレベルのもの」です。プログラム的に言えば「同じ型のインスタンス」です。
-表を「ヘッダ（型の定義）」と「行の集合（インスタンスの集合）」だけで構成できるとわかりやすいです。
+\subsection{以行为本}
+建议时刻谨记\textbf{以行为一个单位}，表格是\textbf{行的集合}这件事。
+某次测量或某条数据就是一行，各行之间是独立的。
+其次，每一行在概念上都是“同一级别的东西”。用编程语言来形容的话就是“同一类型的实例”。
+如果一个表格能够只由“表头（类型定义）”和“行的集合（实例的集合）”构成，那它就是一个易于理解的表格。
 
-\Tref{tbl:good_example}の例では、第一行のヘッダ部分に「名前」など列の説明が記載され、第二行以降の本体部分は「一人のデータが一行」になっています。
-ここで、各行は、順番を並び替えても問題ありません（オデロさんとオリファーさんを入れ替えても大丈夫）。
-実際に表を作るときは並びに気を使い身長順にソートしたりしますが、セマンティックには、各行の入れ替えが可能です。そのような表を目指すとよいです。
-表本体部分について、並び変えるとおかしくなる場合は、表の構成を考え直したり、グラフで表現できないか考えてみるといいです。
+在\Tref{tbl:good_example}的例子中，第一行的表头部分是“姓名”等对列的说明，第二行以后的主体部分满足“一个人的数据为一行”原则。
+在这个例子中，即使改变每行的排列顺序也没有问题（交换奥迪罗和奥利法的顺序也没关系）。
+虽然在实际制作表格时，以身高为基准进行了排序，但从含义上来讲，交换各行的顺序也没有关系。我们的目标就是能够制作出这样的表格。
+如果改变表格主体部分的排列顺序会感到不自然的话，重新考虑表格的构成或者考虑能否用图表来表示会比较好。
 
-booktabsの三種類の横線（\mintinline{tex}{\toprule}, \mintinline{tex}{\midrule}, \mintinline{tex}{\bottomrule}）はこの行志向の表の構成に対応します。
-一番上が\mintinline{tex}{\toprule}で、一番下が\mintinline{tex}{\bottomrule}で、あとは「ヘッダ」と「行の集合」の間に\mintinline{tex}{\midrule}をおきます。そのスタイルが基本です。
+booktabs的三种横线（\mintinline{tex}{\toprule}, \mintinline{tex}{\midrule}, \mintinline{tex}{\bottomrule}）与这种以行为单位的表格的构成是相匹配的。
+最上面一条线是\mintinline{tex}{\toprule}，最下面一条线是\mintinline{tex}{\bottomrule}，然后就是在“表头”和“行的集合”之间插入\mintinline{tex}{\midrule}。这种是基本的格式。
 
-上記はもちろん原則です。考えられる例外としては、「合計」とか「平均」の行を最初や最後に置く場合が挙げられると思います（\Tref{tbl:avg1}）。
-合計や平均は他の行に依存するため、他の行から独立していません。また、合計や平均は表の最初か最後の行に書くことが多いでしょう。
-このような例では、\Tref{tbl:avg2}のように、わかりやすくするために「平均」の上に横線を引くこともあると思います。しかし横線の引きすぎには注意してください。
+当然上述只是原则上的格式，也存在例外情况。比如将“合计”或“平均”那行放到最初或最后（\Tref{tbl:avg1}）。
+由于合计或平均与其他行相关，所以它们不是独立于其他行的。很多情况下，会将合计或平均放到表格的最初或最后。
+在这个例子中为了便于理解，也可以像\Tref{tbl:avg2}那样在“平均”之上画一条横线。只不过需要注意不要画太多的横线。
 
-表を作るということは、行志向の原則を可能な限り守りつつ、「読者への情報提示をわかりやすくするにはどうすればよいか」
-「限られた紙面スペースをどう有効活用するか」ということを模索して作っていくものだと言えます。
-
+在制作表格时，除了遵守“以行为本”的原则外，还要在制作过程中逐渐摸索怎样才能更加便于读者理解，以及怎样才能充分利用有限的纸面空间。
 
 
 \begin{table}[h]
     \begin{minipage}{0.48\linewidth}
         \centering
         \begin{tabular}{@{}lll@{}} \toprule
-            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
-            オデロ・ヘンリーク  & 173 & 62.2 \\ 
-            オリファー・イノエ  & 178 & 69.5 \\
-            オイ・ニュング      & 167 & 52.1 \\ 
+            姓名 & 身高 (cm) & 体重 (kg) \\ \midrule
+            奥迪罗·汉宁古  & 173 & 62.2 \\ 
+            奥利法·伊诺埃  & 178 & 69.5 \\ 
+            奥伊·宁格      & 167 & 52.1 \\ 
             平均               & 172.7  & 61.3 \\ \bottomrule   
         \end{tabular}
-        \caption{最後に平均が記載される例}
+        \caption{把平均放在最后的例子}
         \label{tbl:avg1}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\linewidth}
         \centering
         \begin{tabular}{@{}lll@{}} \toprule
-            名前 & 身長 (cm) & 体重 (kg) \\ \midrule
-            オデロ・ヘンリーク  & 173 & 62.2 \\ 
-            オリファー・イノエ  & 178 & 69.5 \\
-            オイ・ニュング      & 167 & 52.1 \\ \midrule
+            姓名 & 身高 (cm) & 体重 (kg) \\ \midrule
+            奥迪罗·汉宁古  & 173 & 62.2 \\ 
+            奥利法·伊诺埃  & 178 & 69.5 \\ 
+            奥伊·宁格      & 167 & 52.1 \\ 
+            \midrule
             平均               & 172.7  & 61.3 \\ \bottomrule   
         \end{tabular}
-        \caption{最後に平均が記載し、またその直前に横線を加える例}
+        \caption{把平均放在最后并在其上面加了横线的例子}
         \label{tbl:avg2}
     \end{minipage}
     \hfill
 \end{table}
 
 
+\subsection{行的分组}
+让表格变得直观的方法之一就是行的分组。
+\Tref{tbl:row_group1}是原本的表格，分别展示了Hoge的方法和我们的方法下的速度和精度。此外，每个方法还有一个参数$k$，表中也展示了$k$的值的变化。这个表格是符合“一行是一个对象”原则的以行为本的表格。
 
-\subsection{行のグループ化}
-表を見やすくする一つの方法が行のグループ化です。\Tref{tbl:row_group1}にもともとの表を示します。
-ここではHoge手法と提案手法について、精度と速度を報告しています。また、どちらの手法もパラメータとして$k$があり、
-$k$を変化させて値を報告しています。この表は「一行が一つの観測」となっており、
-行志向の適切な表です。
+另一方面，最左列的Hoge和Ours并列在一起，对于读者来说存在信息冗余。
+这种情况下，像\Tref{tbl:row_group2}这样，将冗余的项目删除，对行进行分组会更好。
+这种方式可以在保证表格信息量的前提下达到缩减字数的效果。
 
-一方で、一番左の列にはHogeやOursが並んでおり、読者に提示する情報としては冗長です。
-この場合、\Tref{tbl:row_group2}に示すように、冗長な項目を削り行をグループ化してしまうとよいです。
-こうすることで、表としての情報は維持したまま、文章量を削ることが出来ました。
+实现\Tref{tbl:row_group2}这种形式就已经可以了。此外，还可以在Hoge和Ours中间用\mintinline{tex}{\multirow}将它们区分开，如\Tref{tbl:row_group3}所示。在这个例子里，由于没有横线的话会比较难懂，所以用\mintinline{tex}{\midrule}添加了一条横线。
+\Tref{tbl:row_group2}和\Tref{tbl:row_group3}哪个更好，主要取决于实际情况。
+如果一个表格不加很多横线就会变得很难懂的话，把它分割成几个表格可能会更加便于理解。
 
-\Tref{tbl:row_group2}で十分であり、これで終わりでOKです。一方で、もし望むのであればHogeやOursを\mintinline{tex}{\multirow}を用いて中心に
-寄せてもよいです。その例が\Tref{tbl:row_group3}です。この場合、横線がないとわかりづらいので、\mintinline{tex}{\midrule}で横線を追加しています。
-\Tref{tbl:row_group2}と\Tref{tbl:row_group3}のどちらが良いかは状況に依存すると思います。
-もし横線をたくさん引かないとわかりづらい表になっているとすれば、それは表を分割するほうが分かりやすい可能性があります。
 
 \begin{table}[h]
     \begin{minipage}[t]{0.32\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            手法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
+            方法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
             Hoge  & 16 & 0.32 & 0.21  \\ 
             Hoge  & 32 & 0.61 & 0.44  \\ 
             Ours  &  9 & 0.47 & 0.26 \\ 
             Ours  & 18 & 0.99 & 0.77 \\ \bottomrule   
         \end{tabular}
-        \caption{もともとの表}
+        \caption{原本的表格}
         \label{tbl:row_group1}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.32\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            手法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
+            方法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
             Hoge  & 16 & 0.32 & 0.21  \\ 
                   & 32 & 0.61 & 0.44  \\ 
             Ours  &  9 & 0.47 & 0.26 \\ 
                   & 18 & 0.99 & 0.77 \\ \bottomrule   
         \end{tabular}
-        \caption{行をグループ化した場合。これでOK。}
+        \caption{将行进行分组后的表格。这样就可以。}
         \label{tbl:row_group2}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.32\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            手法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
+            方法 & $k$ & 速度 (ms) & 精度 (Recall) \\ \midrule
             \multirow{2}{*}{Hoge}  & 16 & 0.32 & 0.21  \\ 
                                    & 32 & 0.61 & 0.44  \\ \midrule  
             \multirow{2}{*}{Ours}  &  9 & 0.47 & 0.26 \\ 
                                    & 18 & 0.99 & 0.77 \\ \bottomrule   
         \end{tabular}
-        \caption{さらに中心に寄せ横線を引いた場合。これでもOK。横線の引きすぎに注意。}
+        \caption{为了更加集中额外加了一条横线。这样也可以。要注意不要加太多横线。}
         \label{tbl:row_group3}
     \end{minipage}
 \end{table}
 
-また、行のグループ化は複数回行うこともできます。例を\Tref{tbl:row_group4}に示します。
-ここでは大学近辺のラーメン屋さん情報をまとめています。
-イメージとしては一列目でソートし冗長な項目を消す、二列目でソートし冗長な項目を消す、と繰り返していくものです。
-やりすぎると見にくくなるので注意しましょう。
+此外，可以进行多次行的分组和合并，如\Tref{tbl:row_group4}所示。
+这是大学附近拉面店的整合信息。整体思路是先对第一列的项目进行排序然后去除冗余，再对第二列项目进行排序然后去除冗余，如此反复。
+请注意如果过度合并的话可能会变得难以阅读。
 
 \begin{table}[h]
     \centering
     \begin{tabular}{@{}llll@{}} \toprule
-        最寄り駅 & 店舗名称 & メニュー品目 & 値段（円） \\ \midrule
-        本郷三丁目 & 海手 & なつラーメン & 700 \\
-                  &     & まぜ麺X & 850 \\
-                  & IBASA & ラーメン & 700 \\
-                  &       & 冷たいラーメン & 650 \\
-        東大前  & 用心麺 & ラーメン & 700  \\ 
-              &         & つけ麺 & 800  \\ \bottomrule   
+        最近的车站 & 店铺名称 & 菜品 & 价格（元） \\ \midrule
+        本乡三丁目 & 海手 & natsu拉面 & 700 \\
+                  &     & 拌面X & 850 \\
+                  & IBASA & 拉面 & 700 \\
+                  &       & 冷面 & 650 \\
+        東大前  & 用心面 & 拉面 & 700  \\ 
+              &         & 蘸面 & 800  \\ \bottomrule   
     \end{tabular}
-    \caption{行のグループ化を二度行った例}
+    \caption{进行了两次行的分组合并的例子}
     \label{tbl:row_group4}
 \end{table}
 
 
-\subsection{行の階層化}
+\subsection{行的分级}
+接下来介绍行的分级技巧。
+\Tref{tbl:row_hierarchy1}中总结了店里售卖的商品信息。每行之间相互独立，是一个优秀的表格。
+由于这里存在类别信息的冗余，所以使用“行的分组”会变得更加整洁，像\Tref{tbl:row_hierarchy2}这样就可以。
 
-次に、行を階層化するテクニックを紹介します。
-\Tref{tbl:row_hierarchy1}では、お店で販売している品目の情報がまとめられています。これも各行が独立しており、良い表です。
-ここで、種別の情報は冗長なので、「行のグループ化」によりまとめたものが\Tref{tbl:row_hierarchy2}です。これでOKです。
-
-ここでさらに、種別情報を用いて品目を階層化した例が\Tref{tbl:row_hierarchy3}です。
-ここでは種別の列を削除し、それを各品目の上位のものとして表示しています。
-このように、列を削除して要素を字下げすることで、行の階層化を達成できます。ここで字下げは単純に空白を入れることで実現しています。
-詳しくはTeXのソースを見てみてください。
+在此基础上，利用类别信息对商品进行分级的例子如\Tref{tbl:row_hierarchy3}所示。
+在这里删掉了类别那一列，把它放到了各个商品的上一级。
+像这样通过删除列来减少字数，以达成行的分级。这里只通过插入空白就实现了字符的缩进，具体请看Tex的代码。
 
 
-\begin{table}[h]
+\begin{table}[b]
     \begin{minipage}[t]{0.32\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            品目 & 種別 & 値段（円）& 売り場（階） \\ \midrule
-            豚肉  & 肉 & 300 & 2  \\ 
+            商品 & 类别 & 价格（元）& 位置（层） \\ \midrule
+            猪肉  & 肉 & 300 & 2  \\ 
             牛肉  & 肉 & 500 & 2  \\ 
-            トマト  & 野菜 & 100 & 3 \\ 
-            キュウリ  & 野菜 & 200 & 3 \\ 
-            キャベツ  & 野菜 & 30 & 4 \\ \bottomrule   
+            番茄  & 蔬菜 & 100 & 3 \\ 
+            黄瓜  & 蔬菜 & 200 & 3 \\ 
+            卷心菜  & 蔬菜 & 30 & 4 \\ \bottomrule   
         \end{tabular}
-        \caption{もともとの表}
+        \caption{原本的表格}
         \label{tbl:row_hierarchy1}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.32\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            品目 & 種別 & 値段（円）& 売り場（階） \\ \midrule
-            豚肉  & 肉 & 300 & 2  \\ 
+            商品 & 类别 & 价格（元）& 位置（层） \\ \midrule
+            猪肉  & 肉 & 300 & 2  \\ 
             牛肉  &  & 500 & 2  \\ 
-            トマト  & 野菜 & 100 & 3 \\ 
-            キュウリ  &  & 200 & 3 \\ 
-            キャベツ  & & 30 & 4 \\ \bottomrule   
+            番茄  & 蔬菜 & 100 & 3 \\ 
+            黄瓜  &  & 200 & 3 \\ 
+            卷心菜  & & 30 & 4 \\ \bottomrule   
         \end{tabular}
-        \caption{種別についてグループ化した例}
+        \caption{根据类别分组后的例子}
         \label{tbl:row_hierarchy2}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.32\linewidth}
         \centering
         \begin{tabular}{@{}lll@{}} \toprule
-            品目  & 値段（円）& 売り場（階） \\ \midrule
+            商品 & 价格（元）& 位置（层） \\ \midrule
             肉       & & \\
-            ~~豚肉     & 300 & 2  \\ 
+            ~~猪肉     & 300 & 2  \\ 
             ~~牛肉     & 500 & 2  \\ 
-            野菜     & & \\
-            ~~トマト   & 100 & 3 \\ 
-            ~~キュウリ & 200 & 3 \\ 
-            ~~キャベツ & 30 & 4 \\ \bottomrule   
+            蔬菜     & & \\
+            ~~番茄   & 100 & 3 \\ 
+            ~~黄瓜 & 200 & 3 \\ 
+            ~~卷心菜 & 30 & 4 \\ \bottomrule   
         \end{tabular}
-        \caption{さらに階層化した例}
+        \caption{进一步分级后的例子}
         \label{tbl:row_hierarchy3}
     \end{minipage}
 \end{table}
 
-このような階層化が役立つ例を一つ紹介します。神奈川県の市の経済規模を調査したいとしましょう。
-\Tref{tbl:row_hierarchy4}に、神奈川県総計の情報、および３つの政令指定都市の情報が示されています。
-比較のため、石川県と富山県の情報も載っています。この表も、各行が各地域を表し独立しているため、良い表です。
-一方で、「総計」は県全体を表すのに対し、「横浜市」は市単体を表すため、
-表現の粒度が行によって異なり、直感的に理解しづらいかもしれません。
 
-ここで、行の階層化を行った例が\Tref{tbl:row_hierarchy5}です。
-これによりずっと理解が簡単になりました。ここではたとえば、横浜市は「市」であるにもかかわらず、
-面積では10倍の石川「県」よりも人口が3倍多いことが見てとれます。
+\newpage
+接下来介绍一个分级可以带来显著效果的例子。假设我们想要调查神奈川县各个市的经济规模。
+\Tref{tbl:row_hierarchy4}展示了神奈川县的统计信息和其中三个行政市的信息。
+为了比较，还列出了石川县和富山县的信息。这个表格每行都能独立表示各个地域的信息，也是一个优秀的表格。
+与此同时，表格中既有表示县整体情况的“总计”，也有“横滨市”这样单独表示一个市的情况。由于各行所表示的级别不同，所以直观上可能难以理解。
 
-注意として、行のグループ化も階層化も、見やすさのために行っているだけだということを意識してください。
-すなわち、いつでも「各行が一つのデータ」である「もともとの表」に戻れるような表にするとよいです。
+因此将行进行分级后的例子如\Tref{tbl:row_hierarchy5}所示。
+这种方式使理解变得容易了许多。比方说，很容易能看出，即使横滨市是“市”，它的人口也是面积是它10倍的石川“县”的3倍多。
+
+需要注意的是，进行行的分组和分级都只是为了便于观看。
+也就是说，制作出的表格要能随时都能恢复成“每行是一条数据”的“原本的表格”。
+
 
 \begin{table}[h]
     \begin{minipage}[t]{0.48\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            県 & 市 & 面積（${km}^2$） & 人口（人） \\ \midrule
-            神奈川県 & 総計 & 2,416 & 9,237,000 \\
-            神奈川県 & 横浜市 & 437 & 3,774,000 \\
-            神奈川県 & 川崎市 & 143 & 1,542,000 \\
-            神奈川県 & 相模原市 & 328 & 726,000 \\
-            石川県   & 総計 & 4,186 & 1,119,000 \\
-            富山県   & 総計 & 4,247 & 1,018,000 \\ \bottomrule   
+            县 & 市 & 面积（${km}^2$） & 人口（人） \\ \midrule
+            神奈川县 & 总计 & 2,416 & 9,237,000 \\
+            神奈川县 & 横滨市 & 437 & 3,774,000 \\
+            神奈川县 & 川崎市 & 143 & 1,542,000 \\
+            神奈川县 & 相模原市 & 328 & 726,000 \\
+            石川县   & 总计 & 4,186 & 1,119,000 \\
+            富山县   & 总计 & 4,247 & 1,018,000 \\ \bottomrule   
         \end{tabular}
-        \caption{もともとの表}
+        \caption{原本的表格}
         \label{tbl:row_hierarchy4}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.48\linewidth}
         \centering
         \begin{tabular}{@{}lll@{}} \toprule
-            地域 & 面積（${km}^2$） & 人口（人） \\ \midrule
-            神奈川県 & & \\
-            ~~~総計  & 2,416 & 9,237,000 \\
-            ~~~横浜市 & 437 & 3,774,000 \\
+            地区 & 面积（${km}^2$） & 人口（人） \\ \midrule
+            神奈川县 & & \\
+            ~~~总计  & 2,416 & 9,237,000 \\
+            ~~~横滨市 & 437 & 3,774,000 \\
             ~~~川崎市 & 143 & 1,542,000 \\
             ~~~相模原市 & 328 & 726,000 \\
-            石川県   & 4,186 & 1,119,000 \\
-            富山県   & 4,247 & 1,018,000 \\ \bottomrule   
+            石川县   & 4,186 & 1,119,000 \\
+            富山县   & 4,247 & 1,018,000 \\ \bottomrule   
         \end{tabular}
-        \caption{行を階層化した例}
+        \caption{将行进行分级后的例子}
         \label{tbl:row_hierarchy5}
     \end{minipage}
 \end{table}
 
 
-\subsection{列の階層化}
+\subsection{列的分级}
+接下来介绍“列的分级”。由于每列表示的都是完全不同的东西，所以无法进行列的分组。不过可以进行列的分级，其中一个例子如\Tref{tbl:col_hierarchy1}所示。
+在这个表中展示了不同方法的最小误差、平均误差和最大误差。
+虽然就这样也没有问题，但每次都要写上“误差”很繁琐。
+像这种情况，可以对表头的项目进行分级。
 
-次に、「列の階層化」を紹介します。列は全て違うものを表すので、列をグループ化することはありませんが、階層化することは出来ます。
-その例を\Tref{tbl:col_hierarchy1}に示します。
-ここでは手法の最小エラー、平均エラー、最大エラーを表示しています。
-これでＯＫなのですが、いちいち毎回ヘッダに「エラー」と書くのは冗長だとも言えます。
-そのような場合、ヘッダの項目を階層化することが出来ます。
-
-階層化した例を\Tref{tbl:col_hierarchy2}に示します。ここでは新たな横線を導入することで、
-もともと別々だった列をまとめることに成功しました。
-ここで、「エラー」と書かれる部分について、複数にまたがる要素は\mintinline{tex}{\multicolumn}コマンドで作成可能です。
-また、「部分横線」は\mintinline{tex}{\cmidrule}というコマンドで記述することが出来ます。
-
+分级之后的例子如\Tref{tbl:col_hierarchy2}所示。在这里通过添加了一条横线，实现了对原本独立各列的整合。
+这里写着“误差”的部分跨越了多个列，可用\mintinline{tex}{\multicolumn}命令来实现。
+此外，“局部横线”可以通过\mintinline{tex}{\cmidrule}命令来实现。
 
 
 \begin{table}[h]
     \begin{minipage}[t]{0.48\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            手法 & 最小エラー & 平均エラー & 最大エラー \\ \midrule
+            方法 & 最小误差 & 平均误差 & 最大误差 \\ \midrule
             Isomap & 0.23 & 0.44 & 0.92 \\
             LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
         \end{tabular}
-        \caption{もともとの表}
+        \caption{原本的表格}
         \label{tbl:col_hierarchy1}
     \end{minipage}
     \hfill
     \begin{minipage}[t]{0.48\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            & \multicolumn{3}{c}{エラー} \\ \cmidrule(l){2-4}
-            手法 & 最小 & 平均 & 最大     \\ \midrule
+            & \multicolumn{3}{c}{误差} \\ \cmidrule(l){2-4}
+            方法 & 最小 & 平均 & 最大     \\ \midrule
             Isomap & 0.23 & 0.44 & 0.92 \\
             LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
         \end{tabular}
-        \caption{列を階層化した例}
+        \caption{将列进行分级后的例子}
         \label{tbl:col_hierarchy2}
     \end{minipage}
 \end{table}
 
 
-「列の階層化」も、何度も行うことが出来ます。その例を\Tref{tbl:col_hierarchy3}に示します。ここでは様々な県の情報を表示しています。
-気温や降水量について、階層化を行うことで見やすくなっています。また、単位の記述を上部に集約するなどして、横方向にだいぶ縮めることが出来ています。
-階層化させていない項目（県名や人口密度）も同じ表に表示させることが可能です。
+“列的分级”同样也可以进行多次，其例子如\Tref{tbl:col_hierarchy3}所示。这里表示了各个县的各种信息。
+将气温和降水量进行分级后，可以使表格变得更加易于观看。同时，由于将单位的声明都写到了上面，所以使表格在横向上缩短了很多，使得没有分级的项目（县名和人口密度）也能被放到同一个表格里了。
+
 
 \begin{table}[h]
     \centering
     \begin{tabular}{@{}lllllllll@{}} \toprule
-        & \multicolumn{3}{c}{気温（$\mathrm{^\circ C}$）} & \multicolumn{2}{c}{降水量（mm）} & \multicolumn{2}{c}{交通の便} & \\ \cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
-        県名 & 最高 & 平均 & 最低 & 8月 & 12月 & 新幹線 & 空港 & 人口密度（人/${km}^2$） \\ \midrule
-        石川県 & 32 & 20 & -1 & 179.8 & 304.7 & \checkmark & \checkmark & 267 \\
-        静岡県 & 27 & 23 & 5 & 250.9 & 63.0 & \checkmark & \checkmark & 461 \\
-        沖縄県 & 33 & 28 & 15 & 175.4 & 104.4 &  & \checkmark & 643 \\ \bottomrule
+        & \multicolumn{3}{c}{气温（$\mathrm{^\circ C}$）} & \multicolumn{2}{c}{降水量（mm）} & \multicolumn{2}{c}{交通方式} & \\ \cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+        县名 & 最高 & 平均 & 最低 & 8月 & 12月 & 新干线 & 飞机 & 人口密度（人/${km}^2$） \\ \midrule
+        石川县 & 32 & 20 & -1 & 179.8 & 304.7 & \checkmark & \checkmark & 267 \\
+        静冈县 & 27 & 23 & 5 & 250.9 & 63.0 & \checkmark & \checkmark & 461 \\
+        冲绳县 & 33 & 28 & 15 & 175.4 & 104.4 &  & \checkmark & 643 \\ \bottomrule
     \end{tabular}
-    \caption{列の階層化を複数回行った表}
+    \caption{对列进行多次分级的表格}
     \label{tbl:col_hierarchy3}
 \end{table}
 
 
-
-\subsection{部分横線：cmidrule}
-
-ここで、「列の階層化」で登場した\mintinline{tex}{\cmidrule}について知っておきましょう。\Tref{tbl:col_hierarchy2}のソースコードは以下のようになります。
+\newpage
+\subsection{局部横线：cmidrule}
+在这里来介绍一下在“列的分级”里提过的\mintinline{tex}{\cmidrule}吧。\Tref{tbl:col_hierarchy2}的代码如下所示。
 
 \begin{minted}[mathescape, % 数式使える
     linenos, % 行番号
     fontfamily=courier, % いい感じのフォント
     breaklines, % 長すぎる行をうまく改行
     %breakindent=20pt, % 改行後の左からの幅
-    %fontsize=\small, % フォントサイズ
+    fontsize=\small, % フォントサイズ
     %numbersep=2pt, % 行番号の内側よせ余白
     frame=single, % lines:上下に線 single:線で囲う
     %baselinestretch=0.7, % 行間
     ]{tex}
 \begin{tabular}{@{}llll@{}} \toprule
-           & \multicolumn{3}{c}{エラー} \\ \cmidrule(l){2-4}
-    手法   & 最小 & 平均 & 最大           \\ \midrule
+           & \multicolumn{3}{c}{误差} \\ \cmidrule(l){2-4}
+    方法   & 最小 & 平均 & 最大           \\ \midrule
     Isomap & 0.23 & 0.44 & 0.92         \\
     LLE    & 0.10 & 0.73 & 1.82         \\ \bottomrule
 \end{tabular}
 \end{minted}
 
-\mintinline{tex}{\cmidrule(l){2-4}}において、「\texttt{l}」の部分は、横線の両端を削るかどうかを意味しています。\texttt{l}であれば左を、\texttt{r}であれば右を、\texttt{lr}であれば両端を削ります。
-この少しの削りで、表の見栄えを調整します。
-その例を\Tref{tbl:cmidrule1}から\Tref{tbl:cmidrule4}に記載しておきました。微妙な違いなのですが、知っておくと便利です。
-\texttt{\{2-4\}}の部分は、対応する列数です。これはいじりながら調整すればよいでしょう。
+\mintinline{tex}{\cmidrule(l){2-4}}中的“\texttt{l}”指的是是否删掉横线的两端。\texttt{l}表示去掉左侧，\texttt{r}表示去掉右侧，\texttt{lr}表示将两端都去掉。
+通过这种细微的删减，来调整表格的外观。
+具体例子如\Tref{tbl:cmidrule1}到\Tref{tbl:cmidrule4}所示。虽然只有细小的差别，但知道的话会很方便。
+\texttt{\{2-4\}}指的是对应的列数。通过不断改变设置，来对表格进行调整就可以。
+
 
 \begin{table}[h]
     \begin{minipage}[t]{0.24\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            & \multicolumn{3}{c}{エラー} \\ \cmidrule(){2-4}
-            手法 & 最小 & 平均 & 最大     \\ \midrule
+            & \multicolumn{3}{c}{误差} \\ \cmidrule(){2-4}
+            方法 & 最小 & 平均 & 最大     \\ \midrule
             Isomap & 0.23 & 0.44 & 0.92 \\
             LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
         \end{tabular}
@@ -524,8 +518,8 @@ $k$を変化させて値を報告しています。この表は「一行が一�
     \begin{minipage}[t]{0.24\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            & \multicolumn{3}{c}{エラー} \\ \cmidrule(l){2-4}
-            手法 & 最小 & 平均 & 最大     \\ \midrule
+            & \multicolumn{3}{c}{误差} \\ \cmidrule(l){2-4}
+            方法 & 最小 & 平均 & 最大     \\ \midrule
             Isomap & 0.23 & 0.44 & 0.92 \\
             LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
         \end{tabular}
@@ -536,8 +530,8 @@ $k$を変化させて値を報告しています。この表は「一行が一�
     \begin{minipage}[t]{0.24\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            & \multicolumn{3}{c}{エラー} \\ \cmidrule(r){2-4}
-            手法 & 最小 & 平均 & 最大     \\ \midrule
+            & \multicolumn{3}{c}{误差} \\ \cmidrule(r){2-4}
+            方法 & 最小 & 平均 & 最大     \\ \midrule
             Isomap & 0.23 & 0.44 & 0.92 \\
             LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
         \end{tabular}
@@ -548,8 +542,8 @@ $k$を変化させて値を報告しています。この表は「一行が一�
     \begin{minipage}[t]{0.24\linewidth}
         \centering
         \begin{tabular}{@{}llll@{}} \toprule
-            & \multicolumn{3}{c}{エラー} \\ \cmidrule(lr){2-4}
-            手法 & 最小 & 平均 & 最大     \\ \midrule
+            & \multicolumn{3}{c}{误差} \\ \cmidrule(lr){2-4}
+            方法 & 最小 & 平均 & 最大     \\ \midrule
             Isomap & 0.23 & 0.44 & 0.92 \\
             LLE    & 0.10 & 0.73 & 1.82 \\ \bottomrule
         \end{tabular}
@@ -558,44 +552,42 @@ $k$を変化させて値を報告しています。この表は「一行が一�
     \end{minipage}
 \end{table}
 
-ちなみに、\Tref{tbl:col_hierarchy3}では\mintinline{tex}{\cmidurle}は「\mintinline{tex}{\cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}}」
-のように全ての線に「lr」を付けて、線の両端を削る形で記述されていました。これを削らない場合を\Tref{tbl:cmidrule5}に示します。
-ここでは\mintinline{tex}{\cmidrule(){2-4}}のようにすべての「lr」を取っています。
-よって、「気温」「降水量」「交通の便」の間の線がつながってしまっていることがわかります。
-ここでは適切に空白を入れるほうがわかりやすい表になります。
 
+顺便一提，\Tref{tbl:col_hierarchy3}是将\mintinline{tex}{\cmidurle}设置成了“\mintinline{tex}{\cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}}”，加了“lr”去掉了线的两端。如果不去掉两端的话就如\Tref{tbl:cmidrule5}所示。
+这里删除了所有的“lr”，设置成了\mintinline{tex}{\cmidrule(){2-4}}的形式。
+这样导致“气温”“降水量”“交通方式”之间的线都连到了一起，因此这里加入适当的空白会使表格更加便于理解。
 
 
 \begin{table}[h]
     \centering
     \begin{tabular}{@{}lllllllll@{}} \toprule
-        & \multicolumn{3}{c}{気温（$\mathrm{^\circ C}$）} & \multicolumn{2}{c}{降水量（mm）} & \multicolumn{2}{c}{交通の便} & \\ \cmidrule(){2-4} \cmidrule(){5-6} \cmidrule(){7-8}
-        県名 & 最高 & 平均 & 最低 & 8月 & 12月 & 新幹線 & 空港 & 人口密度（人/${km}^2$） \\ \midrule
-        石川県 & 32 & 20 & -1 & 179.8 & 304.7 & \checkmark & \checkmark & 267 \\
-        静岡県 & 27 & 23 & 5 & 250.9 & 63.0 & \checkmark & \checkmark & 461 \\
-        沖縄県 & 33 & 28 & 15 & 175.4 & 104.4 &  & \checkmark & 643 \\ \bottomrule
+        & \multicolumn{3}{c}{气温（$\mathrm{^\circ C}$）} & \multicolumn{2}{c}{降水量（mm）} & \multicolumn{2}{c}{交通方式} & \\ \cmidrule(){2-4} \cmidrule(){5-6} \cmidrule(){7-8}
+        县名 & 最高 & 平均 & 最低 & 8月 & 12月 & 新干线 & 飞机 & 人口密度（人/${km}^2$） \\ \midrule
+        石川县 & 32 & 20 & -1 & 179.8 & 304.7 & \checkmark & \checkmark & 267 \\
+        静冈县 & 27 & 23 & 5 & 250.9 & 63.0 & \checkmark & \checkmark & 461 \\
+        冲绳县 & 33 & 28 & 15 & 175.4 & 104.4 &  & \checkmark & 643 \\ \bottomrule
     \end{tabular}
-    \caption{\Tref{tbl:col_hierarchy3}でcmidruleの削りを適切に設定しなかった場合}
+    \caption{没在\Tref{tbl:col_hierarchy3}中设定cmidrule删减的结果}
     \label{tbl:cmidrule5}
 \end{table}
 
 
 
-\subsection{列を行に移す}
-列の情報を行に移すことで表がスッキリする場合があります。この技術はオススメ\textbf{では無い}のですが、現実的に遭遇する場面が多いため紹介します。
-例を用いて説明します。\Tref{tbl:col2row1}がもともとの表です。
-ここでは２つの手法を３つのデータセットで評価し、実行時間を報告しています。各行が１つの観測に対応する、良い表です。
-手法に関して行をグループ化しています。この表はこれでオシマイでいいのですが、以下の二点の要請があり得ます。
+\subsection{将列移到行}
+有时将列的内容移到行会使表格变得更简洁。虽然我\textbf{不推荐}这种技巧，但是在实际中经常会遇到这种情况所以还是来介绍一下。
+举个例子，\Tref{tbl:col2row1}是原本的表格。
+这里在3个数据集上对2种方法进行了评价，并列出了运行时间。每行都有一个相应的结果，是一个优秀的表格。
+对每个方法进行了行的分组。本来这样就可以，但是可能会有以下两个需求。
 \begin{itemize}
-    \item 同じDatasetで手法を見比べたいが、値の位置が離れている。例えばMNIST上でのk-means (10.2)とOurs (8.3)が離れている。
-    \item MethodやDatasetが増えていくと、表が縦長になってしまう。横長にしたい。
+    \setlength{\itemsep}{-0.5ex}
+    \item 想在同一个Dataset里比较不同方法，但是数值不在一起。比如MNIST的k-means (10.2)和Ours (8.3)离得较远。
+    \item 继续增加Method或Dataset的话，会使表格变得过于竖长。想在横向上增加长度。
 \end{itemize}
-このような場合、どうするとよいでしょうか？
+遇到这种情况时该怎么办才好呢？
 
-\textbf{一つの列（ここではDataset）を行方向に移す}ということが考えられます。「一つのデータ（一つの行）」を、「手法・データセット・実行時間」ではなく、
-「手法・データセット１の実行時間・データセット２の実行時間・データセット３の実行時間」
-と考え直すということです。そうしたものを\Tref{tbl:col2row2}に示します。
-これにより、２つの要請である「同じデータセットでの値の位置を近くする」「横長にする」はクリアすることが出来ました。一方で、ヘッダ部分が明らかに冗長になってしまっています。
+可以考虑\textbf{将某一列（在这里是Dataset）移到行}。“一条数据（一行）”不再是“方法・数据集・运行时间”，而是变成
+“方法・数据集１的运行时间・数据集２的运行时间・数据集３的运行时间”。这样转换之后的表格就如\Tref{tbl:col2row2}所示。
+这种方式同时满足了“将同一个数据集的数值放到相近位置”“增加横向长度”的两个要求。但相应地，表头的部分明显变得冗长了。
 
 \begin{table}[h]
     \begin{minipage}{0.32\linewidth}
@@ -609,7 +601,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
                       & ImageNet & 39.1 \\ 
                       & Places   & 82.3 \\ \bottomrule   
         \end{tabular}
-        \caption{もともとの表}
+        \caption{原本的表格}
         \label{tbl:col2row1}
     \end{minipage}
     \hfill
@@ -621,15 +613,15 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             k-means   & 10.2 & 45.3 & 57.1 \\ 
             Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
         \end{tabular}
-        \caption{Datasetの列を行に移したもの。ヘッダが冗長。}
+        \caption{将Dataset这一列移到行之后。表头变得冗余。}
         \label{tbl:col2row2}
     \end{minipage}
 \end{table}
 
-これに対し「列の階層化」を適用したものが\Tref{tbl:col2row3}です。
-だいぶ良くなりました。ここでオシマイでもOKです。
-しかしここでは「Dataset=」という記述がヘッダに３度登場し、冗長です。
-これをさらにスッキリさせる２つのアイデアが\Tref{tbl:col2row4}と\Tref{tbl:col2row5}です。
+面对这种情况，使用“列的分级”后就变成了\Tref{tbl:col2row3}。
+明显变得好多了，就这样结束也没有问题。
+只不过这里“Dataset=”在表头出现了3次，显得冗余。
+\Tref{tbl:col2row4}和\Tref{tbl:col2row5}是将表格变得更加简洁的2个方法。
 
 
 \begin{table}[h]
@@ -640,25 +632,20 @@ $k$を変化させて値を報告しています。この表は「一行が一�
         k-means   & 10.2 & 45.3 & 57.1 \\ 
         Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
     \end{tabular}
-    \caption{行を階層化したもの。マシになったが、「Dataset=」の部分がまだ冗長。}
+    \caption{将列进行分级后的结果。虽然比之前变好了，但“Dataset=”的部分还是冗余。}
     \label{tbl:col2row3}
 \end{table}
 
 
-\Tref{tbl:col2row4}では、\Tref{tbl:col2row3}から「Dataset=」の部分を取り除いています。
-これで表は見やすくなりました。今回の表の場合はこれでも意味が通じるでしょう。一方で、ここでは「Dataset=」という記述が
-どこにも書かれていないことになるため、「MNIST」の部分が一体何なのかわかりません。
-よって、このパターンはRuntime以下の階層が説明なしに伝わる場合にしか使えないでしょう。
+\Tref{tbl:col2row4}去掉了\Tref{tbl:col2row3}中“Dataset=”的部分，使表格变得更加容易观看了。在这个例子里，就这样也能让人明白表格的含义。然而，由于完全没写“Dataset=”的说明，所以读者可能会不明白“MNIST”的部分是什么意思。
+因此，不另外说明Runtime下面项目的含义的话，这种写法是行不通的。
 
 
-\Tref{tbl:col2row5}では、\Tref{tbl:col2row3}から「Runtmie (ms)」を取り除き、
-その位置に「Dataset」を記入しています。
-これが一番スッキリします。一方で、この場合は表の値が何なのかという情報が抜け落ちるため、
-キャプションに「これはRuntime (ms)の表です」という記述を追加する必要があります。
-これは、「表が単一種類の値のみで構成されている場合、その値の説明をキャプションで行うことで、ヘッダに表示する情報を減らし、表をスッキリさせることができる場合がある」ということです。
-ちなみに、この単一種類の値の表は、本資料の他の表と違う特長を持ちます。
-すわなち、ヘッダが要素の説明になっていません。個人的にはこの方式はあまり好きではなく、ヘッダが要素説明になっているほうがいいと思います。
-一方で、スペースの要請からどうしてもそのようにする場面もあるでしょう。
+\Tref{tbl:col2row5}把\Tref{tbl:col2row3}中的“Runtmie (ms)”改成了“Dataset”，这是最简洁的写法。由于没有解释表格里数值的含义，所以有必要在注释里加上“这是Runtime (ms)的表格”的说明。
+这就是“当表格由唯一一种数据构成时，有时可以通过把对数值的说明放到注释里的方式来减少表头信息量，使表格变得简洁”的方法。
+顺便一提，这种只含唯一一种数据的表格，与本资料的其他表格相比有一个特点。
+那就是，表头里不含对元素的说明。我个人不是很喜欢这种方式，我还是认为表头里包含元素说明比较好。
+不过也可能存在由于空间限制必须要这么写的情况。
 
 
 \begin{table}[h]
@@ -670,7 +657,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             k-means   & 10.2 & 45.3 & 57.1 \\ 
             Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
         \end{tabular}
-        \caption{「Dataset=」を省略した場合。見やすくなったが、「Dataset=」の情報はどこにも記述できない。}
+        \caption{省略了“Dataset=”的情况。虽然变简洁了，但是哪里都没有关于“Dataset=”的信息。}
         \label{tbl:col2row4}
     \end{minipage}
     \hfill
@@ -682,60 +669,57 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             k-means   & 10.2 & 45.3 & 57.1 \\ 
             Ours      & 8.3  & 39.1 & 82.3 \\ \bottomrule   
         \end{tabular}
-        \caption{「Runtime (ms)」を省略した場合。一番スッキリするが、「Runtime (ms)の表である」という情報をキャプションに記述する必要がある。}
+        \caption{省略了“Runtime (ms)”的情况。虽然最简洁，但是有必要在注释里加上“这是Runtime (ms)的表格”的说明。}
         \label{tbl:col2row5}
     \end{minipage}
 \end{table}
 
-さて、そもそも今回色々な表を考えたのは、Method方向・Dataset方向のどちらにも注目したかったからです。
-表は行と列しかないので、二軸に注目する情報を提示する場合は、\Tref{tbl:col2row4}や\Tref{tbl:col2row5}のようにどうしてもマトリクス的な表現になってしまいます。
-よって、「一つの行は一つの観測」の原則からだんだん離れていってしまいます。
-そのような場合、グラフの使用も検討してください。同じ情報をグラフで提示したものが\Fref{fig:single_val}です。
-ここでは「あるデータセットにおける手法の比較」も「ある手法に関してデータセットを変えた際の比較」も可能です。
-また今回は、データセット・手法を増やしてもグラフ上のスペースは変わりません。さらに、エラーバー追加や箱髭図への変更も可能です。
-一方で、グラフを用いる弱点は具体的な数値が表現されないことです。例えば既存手法との数値の比較が必要な際はグラフは使いにくいかもしれません。
-表とグラフのメリットデメリットを考えながら、最も有効な情報表現を考えていくとよいでしょう。
+
+回归正题，这次讨论了很多种表格的写法，是因为我们既想从Method角度也想从Dataset角度进行分析。
+由于表格只由行和列构成，所以想要在横向和纵向上都进行分析的时候，就会变成\Tref{tbl:col2row4}和\Tref{tbl:col2row5}这样类似于矩阵的形式。
+因此，这样就逐渐远离了“一行是一次观测”的原则。
+这种情况下，可以考虑使用图表。将同样内容用图表形式来表现的话就如\Fref{fig:single_val}所示。
+这样既能实现“某个数据集下不同方法比较”也能实现“不同数据集下某个方法比较”。
+在这次的例子中，就算再增加数据集或方法，图表所占的空间也不会改变。此外，还可以增加误差条或者转换成箱线图的形式。
+另一方面，使用图表的缺点是无法显示具体的数值。比如当需要和既存方法的数值进行比较时，使用图表就会显得不够方便。
+建议通过考虑表格和图表的优缺点，来选择最有效的表示信息的方式。
+
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\linewidth]{script/single_val.pdf}
-    \caption{\Tref{tbl:col2row4}や\Tref{tbl:col2row5}をグラフにしたもの。}
+    \caption{把\Tref{tbl:col2row4}和\Tref{tbl:col2row5}转换成图表。}
     \label{fig:single_val}
 \end{figure}
 
 
-
-
-
-\subsection{表の作成で悩んだら}
-表の作成で悩んだ場合、以下を順番にやってみましょう。
+\subsection{对表格制作感到无从下手的话}
+如果你对于表格制作感到无从下手的话，可以试着按照以下顺序来做。
 \begin{enumerate}
-    \item 「一行が１つのデータ」の原則になるまで、表を分解する。とても縦に長くなってもOK。
-    \item 一番重要な項目について、「行のグループ化」を繰り返す。必要に応じて「行の階層化」も行う。
-    \item 必要に応じて「列のグループ化」を行う。
-    \item それでもまだおさまりが悪ければ、「列を行に移す」を行い、「行の階層化」を行う。冗長な記述を省略する。
-    \item それでもまだおさまりが悪ければ、グラフの使用を検討する。
+    \setlength{\itemsep}{-0.5ex}
+    \item 根据“一行是一条数据”的原则来分解表格。就算横向上很短也没关系。
+    \item 对最重要的那一项反复进行“行的分组”。需要的话也可以进行“行的分级”。
+    \item 需要的话进行“列的分级”。
+    \item 如果还是感到不合适，可以进行“将列移到行”和“行的分级”。然后省略掉冗长的说明。
+    \item 如果还是感到不合适，可以考虑使用图表。
 \end{enumerate}
 
 
-\section{ケーススタディ}
+\section{案例分析}
+接下来通过几个例子，来学习怎样能使表格变美观吧。首先请看\Tref{tbl:use_case1}、\Tref{tbl:use_case2}和\Tref{tbl:use_case3}。
+这里显示的是改变参数时各个方法的精度。看上去它们全都反映了同样的内容，但其实这里面包含了常见的错误。
 
-さて、いくつか例をあげて、表をどのように綺麗にするか見ていきましょう。まずは\Tref{tbl:use_case1}、\Tref{tbl:use_case2}、\Tref{tbl:use_case3}を考えます。
-ここではパラメータを変えた際の各手法の精度を報告しています。これらは全て同じ情報を示そうとしていますが、ありがちなミスを含んでいます。
+首先来看\Tref{tbl:use_case1}。它表示的是当改变参数$T$时，ResNet50和我们的方法的精度变化。
+这个表格第一眼看上去好像很工整，但是仔细看就会发现，本应是表头的第一行里，并不完全是表头信息。比如ResNet50的上面本来应该是“Method”，然而这里却变成了$T$。此外，“0.32”上面的“1”也不能成为对数据的说明。因此，这不是一个由“表头 + 行的集合”所构成的表格。
+另外，这个表格里也没有对要素的说明（即说明数据表示的是精度）。也就是说，不明白数字的含义，必须要添加注释才行。对于这种小表格而言，不用注释就能在表中把所有信息都展示出来的表格应该是最整洁的。
 
-まず\Tref{tbl:use_case1}から見てみましょう。ここでは、パラメータ$T$を変化させたときの、ResNet50と提案手法のスコアの変動を表現しています。
-この表は一見こぎれいにまとまっているように見えます。しかしよく見ると、ヘッダであるべき一行目はヘッダになっていないことがわかります。たとえばResNet50の上には「Method」という
-情報が来るべきですが、ここでは$T$になってしまっています。また、「0.32」の上は「1」になっており、これも説明になっていません。なので、これは「ヘッダ + 行の集合」のイケている表にはなっていません。
-加えて、この表には要素の情報（精度であるということ）が記載されていません。すなわち、この数字が何なのかわかりません。キャプションに書く必要があります。このような小さい表ではキャプションを使わずに
-表中に全て記載するほうがスッキリする可能性が高いです。
+相信很多人会把同样的内容用\Tref{tbl:use_case2}这种形式来表示。左上角的格子里包含“斜线”和“横向纵向的信息”。
+由于在小学和中学学过这种方法，所以相信很多人都会这么写。
+然而这种方式也不满足“表头 + 行的集合”的形式。
+此外，这种写法经常需要添加竖线。
 
-同じ情報を、\Tref{tbl:use_case2}のように書いてしまうことも多いでしょう。ここでは、左上のマスに「斜め線」と「両軸の情報」を記載しています。
-この方式は小学校や中学校で習うため、ついこう書いてしまう人が多いようです。
-しかし、これもまた、「ヘッダ + 行の集合」形式になっていません。
-加えて、この方式を書くときは縦線を記入してしまうことが多いようです。
+可能还有人会写成\Tref{tbl:use_case3}的形式。它比\Tref{tbl:use_case1}稍好，也能让人明白“0.32”上面是“$T=1$”。然而还是不能让人明白数字的含义是什么。
 
-あるいは、\Tref{tbl:use_case3}のように書くかもしれません。これは\Tref{tbl:use_case1}に比べて少し良くなり、0.32の上は「$T=1$」であることがわかります。
-しかし、「数字が何なのか」は、やはりわかりません。
 
 \begin{table}[h]
     \begin{minipage}{0.32\linewidth}
@@ -745,7 +729,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             ResNet50  & 0.32 & 0.54 & 0.77 \\ 
             Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
         \end{tabular}
-        \caption{ありがちな例その１}
+        \caption{常见例子１}
         \label{tbl:use_case1}
     \end{minipage}
     \hfill
@@ -756,7 +740,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             ResNet50  & 0.32 & 0.54 & 0.77 \\ 
             Ours      & 0.41 & 0.81 & 1.23 \\ \hline
         \end{tabular}
-        \caption{ありがちな例その２}
+        \caption{常见例子２}
         \label{tbl:use_case2}
     \end{minipage}
     \hfill
@@ -767,18 +751,19 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             ResNet50  & 0.32 & 0.54 & 0.77 \\ 
             Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
         \end{tabular}
-        \caption{ありがちな例その３}
+        \caption{常见例子３}
         \label{tbl:use_case3}
     \end{minipage}
 \end{table}
 
-さて、この表を良くするにはどうすればいいでしょうか？まず、「一行が一つのデータ」になるまで分解してみます。
-ここでの「一つのデータ」とは、「ある手法で、あるパラメータ$T$で、測定結果である精度（mAP）」になります。
-その結果が\Tref{tbl:use_case4}です。ここでは、各要素が「精度」であると言う点をちゃんとヘッダに記述できています。これで終わりでもいいのですが、もう少し考えてみましょう。
-実はこの表は\Tref{tbl:col2row1}と同じ構造をしています。なので、「$T$の列を行に移す」「列を階層化する」を行い、\Tref{tbl:use_case5}
-のようにまとめることが出来ます。これは\Tref{tbl:col2row1}を\Tref{tbl:col2row3}にしたものに相当します。
-ここでは$T=1$といった記述は十分短いなので、この表が一番見やすく情報を提示できているでしょう。
-\Tref{tbl:use_case3}に比べると、「mAP」という情報を表の中に記述できており、また「Method」という説明も追加されています。
+
+那么，怎样才能将这些表格变好看呢？首先试着将表格分解至“一行是一条数据”。
+这里所谓的“一条数据”指的是“使用某个方法和某个参数$T$时，测量结果的精度（mAP）”。
+结果如\Tref{tbl:use_case4}所示。这里在表头注明了各个要素是“精度”。虽然这样就可以了，但还是再来进一步思考一下吧。
+实际上这个表格和\Tref{tbl:col2row1}的结构是相同的。因此进行“将$T$这一列移到行”和“列的分级”，整合后得到\Tref{tbl:use_case5}。这就相当于把\Tref{tbl:col2row1}转换成\Tref{tbl:col2row3}的过程。
+由于这里$T=1$的描述已经很短了，所以这个表格已经可以最直观地展示信息了。
+与\Tref{tbl:use_case3}相比，“mAP”的信息出现在了表格里，并且也增加了“Method”的说明。
+
 
 \begin{table}[h]
     \begin{minipage}{0.48\linewidth}
@@ -792,7 +777,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
                     & 4  & 0.81 \\
                     & 16 & 1.23 \\ \bottomrule   
         \end{tabular}
-        \caption{「一行が一つのデータ」になるまで分解した場合}
+        \caption{分解至“一行是一条数据”后的结果}
         \label{tbl:use_case4}
     \end{minipage}
     \hfill
@@ -804,14 +789,16 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             ResNet50  & 0.32 & 0.54 & 0.77 \\ 
             Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
         \end{tabular}
-        \caption{$T$列を行に移し、列を階層化した場合。今回はこれが一番見やすい。}
+        \caption{把$T$那一列移到行并进行列的分级后的结果。在这个例子中这种形式是最直观的。}
         \label{tbl:use_case5}
     \end{minipage}
 \end{table}
 
-ここで、\Tref{tbl:col2row4}や\Tref{tbl:col2row5}のようにさらに省略を行うとどうなるでしょうか？それを\Tref{tbl:use_case6}、\Tref{tbl:use_case7}に示します。
-\Tref{tbl:use_case6}では、「$T=$」の部分を省略しています。今回はこの省略は有効ではありません。「1, 4, 16が何なのか」がわからなくなってしまっています。なのでこれはやめておいたほうがいいですね。
-\Tref{tbl:use_case7}では、「mAP」の部分を省略しています。この場合、その情報をキャプションに書く必要があります。今回の例ではここまで省略する必要はなさそうです。
+
+不过，能将表格进一步省略成\Tref{tbl:col2row4}或\Tref{tbl:col2row5}的形式吗？结果如\Tref{tbl:use_case6}和\Tref{tbl:use_case7}所示。
+\Tref{tbl:use_case6}里省略了“$T=$”的部分。在这个例子中，这个省略是行不通的，因为会让人不明白1, 4, 16是什么。所以还是不要这么写比较好。
+\Tref{tbl:use_case7}里省略了“mAP”。这种情况下，需要在注释里加上对它的说明。在这个例子里似乎没有做这种省略的必要。
+
 
 \begin{table}[h]
     \begin{minipage}{0.48\linewidth}
@@ -822,7 +809,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             ResNet50  & 0.32 & 0.54 & 0.77 \\ 
             Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
         \end{tabular}
-        \caption{「$T=$」を省略した場合。ここでは1, 4, 16の意味が通じなくなってしまっており、よくない表になっている。}
+        \caption{省略了“$T=$”的情况。这里会让人不明白1, 4, 16的含义，不是一个优秀的表格。}
         \label{tbl:use_case6}
     \end{minipage}
     \hfill
@@ -834,33 +821,30 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             ResNet50  & 0.32 & 0.54 & 0.77 \\ 
             Ours      & 0.41 & 0.81 & 1.23 \\ \bottomrule   
         \end{tabular}
-        \caption{「mAP」を省略した場合。「mAPの図である」という記述をキャプションに書く必要がある。}
+        \caption{省略了“mAP”的情况。需要在注释里加上“这是mAP的表格”。}
         \label{tbl:use_case7}
     \end{minipage}
 \end{table}
 
-ちなみに、今回もグラフにすることが出来ます。それを\Fref{fig:use_case}に示します。ここでは$T$は変化させることができる連続量なので、
-棒グラフではなく折れ線グラフにしています。グラフと表のどちらがいいかは、状況に応じて決めてください。
+
+此外，这次的例子还可以用图表来表示，如\Fref{fig:use_case}所示。由于在这里$T$是可连续变化的变量、因此使用了折线图而不是柱状图。
+请根据情况来决定图表和表格哪一个更好。
+
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.5\linewidth]{script/use_case.pdf}
-    \caption{\Tref{tbl:use_case5}をグラフにしたもの。}
+    \caption{把\Tref{tbl:use_case5}转换成图表。}
     \label{fig:use_case}
 \end{figure}
 
 
-
-
-
-
-さて、別の例も見てみましょう。次は\Tref{tbl:use_case8}を見てます。
-この例は\Tref{tbl:use_case1}に似ています。おさまりは良く見えますが、一行目がヘッダになっていない、イマイチな表です。
-しかも、\Tref{tbl:use_case1}では一列目を「Method」としてまとめられたのに対し、この例ではそれに相当するうまい単語がありません。どうすればよいでしょうか。
-今回の場合は実は、じっと眺めていると、行と列を全て入れ替えた\Tref{tbl:use_case9}のほうが、「各行が１つのデータ」に対応する
-スッキリした表になっていることがわかります。なので、行志向を目指す考えのもとでは\Tref{tbl:use_case8}のほうが良い表であると言えます。
-一方で、ここではヘッダ部分の項目が長すぎて、表中に空白が目立っています。
-スペースを有効活用するためにどうするかは、腕の見せどころです。例えば単位を改行したりするといいかもしれません。
+接下来，再来看一个例子吧。请看\Tref{tbl:use_case8}。
+这个例子与\Tref{tbl:use_case1}类似，看上去好像很工整，但第一行不能被称之为表头，因此不能被称为一个优秀的表格。
+并且不同于\Tref{tbl:use_case1}的第一列能用“Method”来概括，这个例子里找不到能够概括的单词。这要怎么办才好呢？
+其实仔细观察这个例子就会发现，把行和列进行交换后的\Tref{tbl:use_case9}更加整洁，符合“每一行是一条数据”的原则。因此，从以行为本的角度来说，\Tref{tbl:use_case8}是更加优秀的表格。
+然而，这里表头的项目太长，使得表格里存在较多空白。
+怎样才能有效利用空白就需要各自的技术了。比如可以把单位放到下一行等。
 
 \begin{table}[h]
     \begin{minipage}{0.48\linewidth}
@@ -870,7 +854,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             Runtime (sec)       & 102 & 110 & 159 \\ 
             Memory (B)  & 100 & 200 & 300 \\ \bottomrule   
         \end{tabular}
-        \caption{もともとの表}
+        \caption{原本的表格}
         \label{tbl:use_case8}
     \end{minipage}
     \hfill
@@ -882,7 +866,7 @@ $k$を変化させて値を報告しています。この表は「一行が一�
             4 & 110 & 200 \\
             16 & 159 & 300 \\ \bottomrule 
         \end{tabular}
-        \caption{行と列を入れ替えた表}
+        \caption{把行和列进行交换后的表格}
         \label{tbl:use_case9}
     \end{minipage}
 \end{table}
